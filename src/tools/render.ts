@@ -7,7 +7,7 @@
  */
 import { spawn } from 'node:child_process'
 import { existsSync, mkdirSync, readFileSync, renameSync, rmSync } from 'node:fs'
-import { dirname, join, resolve } from 'node:path'
+import { basename, dirname, join, resolve } from 'node:path'
 import { createRequire } from 'node:module'
 import type { Context } from '@deepseek-ai/cordis'
 import { defineTool } from '@deepseek-ai/dsh-tools'
@@ -15,7 +15,7 @@ import type { Config } from '../config.ts'
 import { callWorkspace } from './context.ts'
 
 interface RenderArgs { pptx: string; pages?: number[]; dpi?: number }
-interface RenderValue { images: { page: number; path: string; width: number; height: number }[]; missingFonts: string[]; outputDir: string }
+export interface RenderValue { images: { page: number; path: string; width: number; height: number }[]; missingFonts: string[]; outputDir: string }
 
 /** Resolved renderer paths, or a reason they are unavailable. */
 export type RendererPaths = { node: string; cli: string } | { error: string }
@@ -71,7 +71,7 @@ export function locateRenderer(config: Config, env: NodeJS.ProcessEnv = process.
   return { node, cli }
 }
 
-function run(node: string, args: string[], signal: AbortSignal, timeoutMs: number): Promise<{ code: number | null; stdout: string; stderr: string }> {
+export function run(node: string, args: string[], signal: AbortSignal, timeoutMs: number): Promise<{ code: number | null; stdout: string; stderr: string }> {
   return new Promise((resolvePromise, reject) => {
     const child = spawn(node, args, { stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true, env: { ...process.env, ELECTRON_RUN_AS_NODE: '1' } })
     let stdout = '', stderr = ''
@@ -85,6 +85,48 @@ function run(node: string, args: string[], signal: AbortSignal, timeoutMs: numbe
   })
 }
 
+/**
+ * Render one built .pptx to PNG images. Callers must resolve the workspace and
+ * check write access to the output directory first.
+ * @param config - plugin config (renderer paths and timeout).
+ * @param pptx - absolute .pptx path.
+ * @param pages - 1-based slide numbers; all slides when empty.
+ * @param dpi - requested resolution per inch.
+ * @param signal - cancellation signal.
+ * @returns rendered image paths and missing-font facts.
+ */
+export async function renderPptx(
+  config: Config,
+  pptx: string,
+  pages: readonly number[],
+  dpi: number,
+  signal: AbortSignal,
+): Promise<RenderValue> {
+  if (!existsSync(pptx) || !pptx.toLowerCase().endsWith('.pptx')) throw new Error(`not a .pptx file: ${pptx}`)
+  const paths = locateRenderer(config)
+  if ('error' in paths) throw new Error(paths.error)
+  const name = basename(pptx).replace(/\.pptx$/i, '')
+  const outDir = join(dirname(pptx), 'review', name)
+  rmSync(outDir, { recursive: true, force: true })
+  mkdirSync(dirname(outDir), { recursive: true })
+  const selected = pages.filter(p => Number.isInteger(p) && p > 0).slice(0, 30)
+  const resolution = Math.max(48, Math.min(200, dpi))
+  const cliArgs = [paths.cli, 'render', '--input', pptx, '--output-dir', outDir, '--dpi', String(resolution), '--max-pages', '30', ...selected.length > 0 ? ['--pages', selected.join(',')] : []]
+  const res = await run(paths.node, cliArgs, signal, config.renderTimeoutMs)
+  signal.throwIfAborted()
+  if (res.code !== 0) throw new Error(`LibreOffice Kit render failed (exit ${res.code}): ${res.stderr.slice(0, 600)}`)
+  const manifestPath = join(outDir, 'manifest.json')
+  const manifest = JSON.parse(existsSync(manifestPath) ? readFileSync(manifestPath, 'utf8') : res.stdout) as { images: { page?: number; index: number; path: string; width: number; height: number }[]; missingFonts?: string[] }
+  // The kit numbers files by output order; rename to the slide number so slide-N.png is slide N.
+  const images = manifest.images.map(i => {
+    const page = i.page ?? i.index
+    const from = resolve(i.path)
+    const to = join(outDir, `slide-${String(page).padStart(2, '0')}.png`)
+    if (from !== to && existsSync(from)) renameSync(from, to)
+    return { page, path: to, width: i.width, height: i.height }
+  })
+  return { images, missingFonts: manifest.missingFonts ?? [], outputDir: outDir }
+}
 /**
  * Register pptx_render.
  * @param ctx - plugin context.
@@ -116,31 +158,9 @@ export function registerRenderTool(ctx: Context, config: Config): void {
     async execute(args, exec) {
       const ws = callWorkspace(ctx, exec)
       const pptx = ws.path(args.pptx)
-      if (!existsSync(pptx) || !pptx.toLowerCase().endsWith('.pptx')) throw new Error(`not a .pptx file: ${pptx}`)
-      const paths = locateRenderer(config)
-      if ('error' in paths) throw new Error(paths.error)
-      const name = pptx.replace(/^.*[\\/]/, '').replace(/\.pptx$/i, '')
-      const outDir = join(dirname(pptx), 'review', name)
+      const outDir = join(dirname(pptx), 'review', basename(pptx).replace(/\.pptx$/i, ''))
       ws.assertWritable(join(outDir, 'x.png'))
-      rmSync(outDir, { recursive: true, force: true })
-      mkdirSync(dirname(outDir), { recursive: true })
-      const pages = (args.pages ?? []).filter(p => Number.isInteger(p) && p > 0).slice(0, 30)
-      const dpi = Math.max(48, Math.min(200, args.dpi ?? 96))
-      const cliArgs = [paths.cli, 'render', '--input', pptx, '--output-dir', outDir, '--dpi', String(dpi), '--max-pages', '30', ...pages.length > 0 ? ['--pages', pages.join(',')] : []]
-      const res = await run(paths.node, cliArgs, exec.signal, config.renderTimeoutMs)
-      exec.signal.throwIfAborted()
-      if (res.code !== 0) throw new Error(`LibreOffice Kit render failed (exit ${res.code}): ${res.stderr.slice(0, 600)}`)
-      const manifestPath = join(outDir, 'manifest.json')
-      const manifest = JSON.parse(existsSync(manifestPath) ? readFileSync(manifestPath, 'utf8') : res.stdout) as { images: { page?: number; index: number; path: string; width: number; height: number }[]; missingFonts?: string[] }
-      // The kit numbers files by output order; rename to the slide number so slide-N.png is slide N.
-      const images = manifest.images.map(i => {
-        const page = i.page ?? i.index
-        const from = resolve(i.path)
-        const to = join(outDir, `slide-${String(page).padStart(2, '0')}.png`)
-        if (from !== to && existsSync(from)) renameSync(from, to)
-        return { page, path: to, width: i.width, height: i.height }
-      })
-      return { images, missingFonts: manifest.missingFonts ?? [], outputDir: outDir }
+      return renderPptx(config, pptx, args.pages ?? [], args.dpi ?? 96, exec.signal)
     },
     presentCall: args => ({ card: 'generic', title: `Render ${args.pptx}`, kind: 'read' }),
   }))

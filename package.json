@@ -1,6 +1,6 @@
 {
   "name": "dsh-pptx-studio",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Design-first PowerPoint generation for DeepSeek Harness: guided intake, AI imagery, editable slides, and built-in layout checks",
   "keywords": [
     "deepseek-harness",

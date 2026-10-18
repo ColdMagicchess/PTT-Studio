@@ -16,7 +16,7 @@ describe('plugin config schema', () => {
   })
 
   it('returns live wrappers for volatile fields and readLive unwraps them', () => {
-    const config = Config({})
+    const config = Config({} as never)
     expect(readLive(config.imageBackend)).toBe('agnes')
     expect(readLive(config.textModelMode)).toBe('session')
     // Non-volatile fields stay plain.

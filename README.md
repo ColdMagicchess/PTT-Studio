@@ -7,7 +7,7 @@
 给一个主题，得到一套可编辑、版式完整、配图统一的 PPT。
 
 [![DeepSeek Harness](https://img.shields.io/badge/DeepSeek%20Harness-%E2%89%A50.2.1--rc.2-0b5fff)](https://github.com/ColdMagicchess/PTT-Studio)
-[![tests](https://img.shields.io/badge/tests-125%20passed-brightgreen)](tests)
+[![tests](https://img.shields.io/badge/tests-131%20passed-brightgreen)](tests)
 [![license](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![node](https://img.shields.io/badge/node-%E2%89%A522.19-339933)](package.json)
 
@@ -63,6 +63,7 @@
 
 - `pptx_build` 组装可编辑 `.pptx`：文字、形状、原生图表、轻量表格、矢量图标、装饰件、页码；
 - `pptx_check` 检查溢出、重叠、安全区、密度、对比度、`fill` 覆盖率、装饰压字、背景纹理采样；
+- `pptx_review` 用配置的独立视觉模型逐页评审渲染图，返回结构化的版式 / 字号 / 对比度 / 配图问题；
 - `pptx_render` 用 LibreOffice Kit 渲染逐页 PNG，交给对话模型做视觉复查；
 - `pptx_generate_assets` 支持 `run_in_background`：图片多时立即返回 job id，模型继续写后面的页，最后用 `job_output` 收结果。
 
@@ -123,11 +124,11 @@ pnpm run pack
 
 然后在 Desktop 中二选一：
 
-1. 打开「插件」页 → 安装第三方插件 → 选择 `dist/dsh-pptx-studio-0.2.2.tgz`；
+1. 打开「插件」页 → 安装第三方插件 → 选择 `dist/dsh-pptx-studio-0.3.0.tgz`；
 2. 或退出 Desktop 后，用自带 CLI 安装：
 
 ```powershell
-"E:\Deepseek harness Desktop\resources\runtime\cli\bin\dsh.cmd" plugin --profile desktop add "E:\path\to\dist\dsh-pptx-studio-0.2.2.tgz"
+"E:\Deepseek harness Desktop\resources\runtime\cli\bin\dsh.cmd" plugin --profile desktop add "E:\path\to\dist\dsh-pptx-studio-0.3.0.tgz"
 ```
 
 重启 Desktop，插件页出现 **PPT 工作室** 即安装成功。
@@ -167,6 +168,7 @@ Key 只写入 DSH 凭据库，不进入配置文件。也可以直接设置同�
 | `pptx_generate_assets` | 生成背景、插画、装饰件；支持 `run_in_background` 后台任务与进度 |
 | `pptx_build` | 按 `deck.json` 组装 `.pptx`，内置几何检查与媒体去重 |
 | `pptx_check` | 检查溢出、重叠、安全区、密度、对比度、覆盖率和装饰压字 |
+| `pptx_review` | 用独立视觉模型逐页评审渲染图，返回结构化问题与修复建议 |
 | `pptx_render` | 用 LibreOffice Kit 逐页渲染 PNG，做视觉复查 |
 
 配套 skill：[`assets/pptx-studio/SKILL.md`](assets/pptx-studio/SKILL.md)；版式与风格参考在 [`assets/pptx-studio/references/`](assets/pptx-studio/references/)。
@@ -178,7 +180,7 @@ Key 只写入 DSH 凭据库，不进入配置文件。也可以直接设置同�
 | 字段 | 默认值 | 说明 |
 |---|---|---|
 | `textModelMode` / `textModelName` | `session` / 空 | 文字模型：跟随对话、Host 路线或自定义模型 |
-| `visionModelMode` / `visionModelName` | `session` / 空 | 视觉模型（视觉评审在后续版本接入） |
+| `visionModelMode` / `visionModelName` | `session` / 空 | 视觉模型：`pptx_review` 用它逐页评审 |
 | `imageBackend` | `agnes` | 当前图片后端；内置 `agnes`、`modelscope` |
 | `imageBackends` | Agnes + ModelScope | 图片后端列表（名称、模型、Base URL、Key 引用） |
 | `customModelsJson` | `[]` | 自定义 OpenAI 兼容模型数组 |
@@ -216,9 +218,9 @@ src/
   build/              pptxgenjs 组装、媒体去重、坐标换算
   images/             图片后端、提示词、风格板、装饰件切割
   check/              几何/对比度/覆盖率检查
-  tools/              5 个模型工具与沙箱写入
+  tools/              6 个模型工具与沙箱写入
   types/host.d.ts     DSH Host API 的最小类型声明
-tests/                vitest 单元测试（125 个）
+tests/                vitest 单元测试（131 个）
 scripts/              端到端与单 deck 开发脚本
 docs/                设置页设计与预览图
 ```
@@ -244,7 +246,7 @@ pnpm run build                     # lib/index.js + lib/client.js
 - [x] Phase 1–4：规范、技术验证、组装/检查、配图与装饰件
 - [x] Phase 4.5：满版、去白框、装饰件物理比例、媒体去重
 - [x] Phase 5：生图后台任务、模型设置页与 Key 输入
-- [ ] Phase 6：独立视觉模型逐页评审（`pptx_review`）
+- [x] Phase 6：独立视觉模型逐页评审（`pptx_review`）
 - [ ] Phase 7：Web 体验（工具卡片、PPT 预览、交付缩略图）
 - [ ] Phase 8：插件市场发布
 

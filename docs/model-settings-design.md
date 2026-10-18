@@ -7,7 +7,7 @@
 - ✅ Host 配置字段（`src/config.ts`）
 - ✅ 插件设置页（`src/client/index.ts`，构建为 `lib/client.js`）
 - ✅ Key 输入框（通过 `ctx.remote.credentials.set` 写入凭据库）
-- ⏳ 非 session 模型的调用工具：文字模型的自动大纲、视觉模型的逐页评审留到阶段 6（`pptx_outline` / `pptx_review`）。当前默认 session，不改变既有行为。
+- ✅ `pptx_review`（阶段 6）：渲染 .pptx 后按 `visionModelMode` 调用独立视觉模型，逐页返回结构化问题；文字模型的自动大纲仍留到后续。
 
 ## Host 配置（扁平字段，便于设置表单读写）
 
@@ -50,4 +50,4 @@ Slot：`plugins.bundle.config`，bundle key 为 `dsh-pptx-studio` / `@deepseek-a
 
 - `configForms`、`plugins.bundle.config`、`remote.credentials` 都是 pre-stable API，升级 0.3 前要重新核对。
 - 外部插件不能新增 typert Remote，所以设置页不能调用插件自定义的 Host 方法；只使用配置表单和凭据库。
-- 设置页里修改自定义模型 JSON 只保存文本；真正调用时的错误（URL 不通、模型名错）会在阶段 6 的工具结果里报告。
+- 设置页里修改自定义模型 JSON 只保存文本；真正调用时的错误（URL 不通、模型名错）会在 `pptx_review` 的结果里报告。

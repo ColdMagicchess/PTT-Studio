@@ -6,7 +6,7 @@ Host 侧插件代码。`pnpm run build` 用 tsdown 把 `src/index.ts` 打成单�
 
 | 文件 | 作用 |
 |---|---|
-| `index.ts` | Cordis 插件入口。`inject = ['tools', 'skills', 'workingDirectory']`；`apply` 校验配置、注册 skill 和 4 个工具 |
+| `index.ts` | Cordis 插件入口。`inject = ['tools', 'skills', 'workingDirectory']`；`apply` 校验配置、注册 skill 和 6 个工具 |
 | `config.ts` | 插件 `Config`（schemastery）：图片后端列表与当前后端、并发、重试、单次张数上限、测宽字体、羽化比例、deck 大小上限 |
 | `skill.ts` | 以 rank 590 注册 `pptx-studio` skill（内置 skill 是 600，用户项目里的 skill 仍然优先） |
 | `paths.ts` | 定位包根目录与 `assets/pptx-studio/`，源码运行和打包运行都适用 |
@@ -21,7 +21,8 @@ Host 侧插件代码。`pnpm run build` 用 tsdown 把 `src/index.ts` 打成单�
 | `build/` | [build/README.md](build/README.md) | 用 pptxgenjs 组装 .pptx，含文字测量与自动适配、图标、饰板 |
 | `images/` | [images/README.md](images/README.md) | 图片提示词拼接与检查、Agnes/魔搭后端、并发重试缓存、羽化 |
 | `check/` | [check/README.md](check/README.md) | 几何与对比度检查 |
-| `tools/` | [tools/README.md](tools/README.md) | 5 个模型工具与沙箱写入检查 |
+| `tools/` | [tools/README.md](tools/README.md) | 6 个模型工具与沙箱写入检查 |
+| `vision.ts` | 独立视觉模型评审：解析自定义模型、路由/会话路由、OpenAI 兼容调用、结构化问题解析；`tools/review.ts` 暴露 `pptx_review` |
 | `client/` | [client/README.md](client/README.md) | 浏览器插件设置页：三类模型、自定义模型、Key 输入（构建为 `lib/client.js`） |
 
 ## 与 DSH 的约定

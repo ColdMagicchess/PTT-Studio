@@ -140,7 +140,7 @@ deck.json 是整套 PPT 唯一的依据：图片提示词由它生成，组装�
 
 交付前对照第 3 步末尾的「常见返工清单」逐条过一遍，`fill` 与 `decor` 警告都清零后再交付。
 
-当前模型能看图时，必须做视觉检查：用 `pptx_render` 渲染成片（先渲染封面、一张内容页和改动过的页，最后整体过一遍），再用 `read_image` 查看，按 [references/quality-checklist.md](references/quality-checklist.md) 的「视觉」项检查。不能看图时，跳过这一步，并在交付时说明视觉检查未做。
+视觉检查优先用插件设置里配置的独立视觉模型：调用 `pptx_review`（`visionModelMode` 为 `route` 或 `custom`，也可以 `session` 且当前模型支持图片），它会渲染每一页并返回结构化的版式/字号/对比度/配图问题。没有配置独立视觉模型、但当前对话模型能看图时，用 `pptx_render` 渲染成片（先渲染封面、一张内容页和改动过的页，最后整体过一遍），再用 `read_image` 查看，按 [references/quality-checklist.md](references/quality-checklist.md) 的「视觉」项检查。既没有视觉模型、当前模型也不能看图时，跳过这一步，并在交付时说明视觉检查未做。
 
 发现问题就修改 deck.json 后重新组装，最多 3 轮。超过 3 轮仍有问题时，把剩余问题如实告诉用户。
 

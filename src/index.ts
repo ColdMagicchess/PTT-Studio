@@ -1,8 +1,8 @@
 /**
  * dsh-pptx-studio: design-first PowerPoint generation for DeepSeek Harness.
  *
- * Registers the pptx-studio skill and four tools:
- * pptx_style_board, pptx_generate_assets, pptx_build, pptx_check, pptx_render.
+ * Registers the pptx-studio skill and six tools:
+ * pptx_style_board, pptx_generate_assets, pptx_build, pptx_check, pptx_render, pptx_review.
  */
 import type { Context } from '@deepseek-ai/cordis'
 import { Config, readLive } from './config.ts'
@@ -11,6 +11,7 @@ import { readSkillDescription, registerSkill } from './skill.ts'
 import { registerBuildTools } from './tools/build.ts'
 import { registerImageTools } from './tools/images.ts'
 import { registerRenderTool } from './tools/render.ts'
+import { registerReviewTool } from './tools/review.ts'
 
 export { Config }
 
@@ -35,4 +36,5 @@ export async function apply(ctx: Context, config: Config): Promise<void> {
   registerBuildTools(ctx, config, measurer)
   registerImageTools(ctx, config)
   registerRenderTool(ctx, config)
+  registerReviewTool(ctx, config)
 }
