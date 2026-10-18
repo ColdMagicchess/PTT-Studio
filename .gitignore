@@ -29,3 +29,8 @@ Thumbs.db
 # local handoff notes and one-off probes
 STATUS.md
 scripts/probe-*.ts
+
+# user decks made with the plugin in this folder (never part of the repo)
+.pptx-studio/
+*.preview.jpg
+*.docx

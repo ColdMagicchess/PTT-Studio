@@ -33,7 +33,7 @@ const NS = 'settings.pptx-studio'
 export const inject = ['slots', 'locale', 'configForms']
 
 /** Fields of the Host config this page edits. */
-const FIELDS = ['textModelMode', 'textModelName', 'visionModelMode', 'visionModelName', 'imageBackend', 'customModelsJson', 'customModelApiKeyRef'] as const
+const FIELDS = ['textModelMode', 'textModelName', 'visionModelMode', 'visionModelName', 'imageBackend', 'customImageBackendsJson', 'customModelsJson', 'customModelApiKeyRef'] as const
 /** Write-only credential controls. */
 const SECRETS = ['agnesKey', 'modelscopeKey', 'customKey'] as const
 /** Credential references the page always reports on. */
@@ -61,7 +61,10 @@ const zh = {
   visionName: '视觉模型路线或名称',
   visionNameHint: 'route 写 provider/model；custom 写自定义模型的 name。',
   imageBackend: '当前图片后端',
-  imageBackendHint: '默认 agnes（Agnes AI 国内站）；也可填 modelscope。图片后端列表在插件配置文件里维护。',
+  imageBackendHint: '填后端名称：内置 agnes（默认）、modelscope，或下面「自定义图片后端」里的 name。',
+  customImageBackends: '自定义图片后端（JSON 数组）',
+  customImageBackendsHint: '任何 OpenAI 兼容的图片接口都可以加。标准 OpenAI Images API（gpt-image、DALL·E、各类中转）用 "kind":"openai"，例：{"name":"my-image","kind":"openai","baseUrl":"https://api.openai.com/v1","model":"gpt-image-1","apiKeyRef":"MY_IMAGE_KEY"}。可选 sizes（按比例覆盖尺寸，如 {"16:9":"1792x1024"}）、responseFormat（b64_json / url）、extraBody（如 {"quality":"high"}）。Key 用上面「自定义模型凭据名」写入同名凭据即可。',
+  invalidImageBackends: '需要合法的 JSON 数组，每项含 name、kind（openai / openai-compatible / modelscope）、baseUrl（https）、model、apiKeyRef。',
   customModels: '自定义模型（JSON 数组）',
   customModelsHint: '每项：{"name":"my-model","baseUrl":"https://example.com/v1","model":"gpt-4o-mini","apiKeyRef":"MY_KEY","api":"openai-chat"}。保存时会校验 JSON 与必填字段。',
   customRef: '自定义模型凭据名',
@@ -105,7 +108,10 @@ const en = {
   visionName: 'Vision route or model name',
   visionNameHint: 'route: provider/model. custom: the custom model name.',
   imageBackend: 'Active image backend',
-  imageBackendHint: 'Defaults to agnes (Agnes AI China). Set modelscope for the fallback. The backend list lives in the plugin config file.',
+  imageBackendHint: 'Backend name: built-in agnes (default), modelscope, or a name from Custom image backends below.',
+  customImageBackends: 'Custom image backends (JSON array)',
+  customImageBackendsHint: 'Add any OpenAI-compatible image API. Use "kind":"openai" for the standard OpenAI Images API (gpt-image, DALL·E, gateways), e.g. {"name":"my-image","kind":"openai","baseUrl":"https://api.openai.com/v1","model":"gpt-image-1","apiKeyRef":"MY_IMAGE_KEY"}. Optional: sizes per aspect ({"16:9":"1792x1024"}), responseFormat (b64_json / url), extraBody ({"quality":"high"}). Store the key under that apiKeyRef with the custom credential field above.',
+  invalidImageBackends: 'Needs a JSON array whose entries carry name, kind (openai / openai-compatible / modelscope), an https baseUrl, model and apiKeyRef.',
   customModels: 'Custom models (JSON array)',
   customModelsHint: 'Each entry: {"name":"my-model","baseUrl":"https://example.com/v1","model":"gpt-4o-mini","apiKeyRef":"MY_KEY","api":"openai-chat"}. JSON and required fields are validated on save.',
   customRef: 'Custom-model credential name',
@@ -186,6 +192,34 @@ function customModelsField() {
 }
 
 /**
+ * The custom image-backend JSON field: validates the array and canonicalizes it.
+ * @returns the field spec.
+ */
+function customImageBackendsField() {
+  return {
+    field: 'customImageBackendsJson',
+    format: (value: unknown) => typeof value === 'string' ? value : '[]',
+    parse: (text: string) => {
+      try {
+        const parsed = JSON.parse(text.trim() === '' ? '[]' : text)
+        if (!Array.isArray(parsed)) return undefined
+        for (const entry of parsed) {
+          if (typeof entry !== 'object' || entry === null) return undefined
+          if (typeof entry.name !== 'string' || entry.name.length === 0) return undefined
+          if (!['openai', 'openai-compatible', 'modelscope'].includes(entry.kind)) return undefined
+          if (typeof entry.baseUrl !== 'string' || !/^(?:https:\/\/|http:\/\/(?:localhost|127\.0\.0\.1)[:/])/.test(entry.baseUrl)) return undefined
+          if (typeof entry.model !== 'string' || entry.model.length === 0) return undefined
+          if (typeof entry.apiKeyRef !== 'string' || !/^[A-Za-z_][A-Za-z0-9_]*$/.test(entry.apiKeyRef)) return undefined
+        }
+        return { kind: 'set', value: JSON.stringify(parsed, null, 2) }
+      } catch {
+        return undefined
+      }
+    },
+  }
+}
+
+/**
  * A credential-reference field (a POSIX shell identifier).
  * @returns the field spec.
  */
@@ -221,7 +255,7 @@ class Controller {
     this.form = new SettingsFormModel(scope, [
       enumField('textModelMode', MODES), settingsTextField('textModelName'),
       enumField('visionModelMode', MODES), settingsTextField('visionModelName'),
-      settingsTextField('imageBackend'), customModelsField(), credentialRefField(),
+      settingsTextField('imageBackend'), customImageBackendsField(), customModelsField(), credentialRefField(),
     ], secrets)
     this.store = this.form.bind(() => this.projection())
     void this.refreshCredentials()
@@ -325,6 +359,11 @@ function SettingsPage(props: any): unknown {
     React.createElement('h4', { key: 'title', style: headingStyle }, title),
     ...children,
   ])
+  const jsonArea = (name: string, label: string, hint: string, invalid: string) => React.createElement('div', { key: name, style: { marginTop: 8 } }, [
+    React.createElement('label', { key: 'label', htmlFor: 'pptx-' + name, style: { display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--dsw-alias-label-primary)', marginBottom: 4 } }, label),
+    React.createElement('textarea', { key: 'input', id: 'pptx-' + name, style: areaStyle, value: state.fields[name].text, disabled, onChange: (event: any) => { props.edit(name, event.target.value) } }),
+    React.createElement('p', { key: 'hint', style: state.fields[name].invalid ? errorStyle : noteStyle }, state.fields[name].invalid ? invalid : hint),
+  ])
   const textarea = React.createElement('div', { key: 'customModelsJson', style: { marginTop: 8 } }, [
     React.createElement('label', { key: 'label', htmlFor: 'pptx-customModelsJson', style: { display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--dsw-alias-label-primary)', marginBottom: 4 } }, t('customModels')),
     React.createElement('textarea', {
@@ -352,7 +391,7 @@ function SettingsPage(props: any): unknown {
       React.createElement('p', { key: 'intro', style: noteStyle }, t('intro')),
       section('text', t('textSection'), [field('textModelMode', t('textMode'), t('textModeHint')), field('textModelName', t('textName'), t('textNameHint'))]),
       section('vision', t('visionSection'), [field('visionModelMode', t('visionMode'), t('visionModeHint')), field('visionModelName', t('visionName'), t('visionNameHint'))]),
-      section('image', t('imageSection'), [field('imageBackend', t('imageBackend'), t('imageBackendHint'))]),
+      section('image', t('imageSection'), [field('imageBackend', t('imageBackend'), t('imageBackendHint')), jsonArea('customImageBackendsJson', t('customImageBackends'), t('customImageBackendsHint'), t('invalidImageBackends'))]),
       section('custom', t('customSection'), [textarea, field('customModelApiKeyRef', t('customRef'), t('customRefHint'))]),
       section('keys', t('credentialSection'), [
         secret('agnesKey', t('agnesKey'), t('agnesKeyHint'), 'AGNES_API_KEY'),

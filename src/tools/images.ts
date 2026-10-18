@@ -9,7 +9,7 @@ import { generateAssets, type AssetOutcome } from '../images/generate.ts'
 import { generateDecorations, type KitOutcome } from '../images/decorations.ts'
 import type { ImageBackendConfig } from '../images/backends.ts'
 import { atomicWrite } from '../fsutil.ts'
-import { readLive, type Config } from '../config.ts'
+import { allImageBackends, readLive, type Config } from '../config.ts'
 
 interface GenerateArgs { deck: string; only?: string[]; force?: boolean; seed?: number; style_reference?: string; backend?: string; run_in_background?: boolean }
 interface GenerateValue { deck: string; backend: string; outcomes: AssetOutcome[]; kits: KitOutcome[]; job?: { id: string; status: 'running'; label: string } }
@@ -39,8 +39,9 @@ interface JobsLike {
 export async function activeBackend(ctx: Context, config: Config, override: string | undefined): Promise<ImageBackendConfig> {
   const name = override ?? readLive(config.imageBackend)
   if (name === '') throw new Error('image generation is disabled: set imageBackend in the pptx-studio plugin config')
-  const entry = config.imageBackends.find(b => b.name === name)
-  if (entry === undefined) throw new Error(`unknown image backend "${name}"; configured: ${config.imageBackends.map(b => b.name).join(', ')}`)
+  const backends = allImageBackends(config)
+  const entry = backends.find(b => b.name === name)
+  if (entry === undefined) throw new Error(`unknown image backend "${name}"; configured: ${backends.map(b => b.name).join(', ')}`)
   const creds = (ctx as unknown as { get(name: string): unknown }).get('credentials') as CredentialsLike | undefined
   let key: string | undefined
   if (creds !== undefined) {
@@ -49,7 +50,7 @@ export async function activeBackend(ctx: Context, config: Config, override: stri
   }
   key ??= process.env[entry.apiKeyRef]
   if (key === undefined || key.length === 0) throw new Error(`image backend "${name}" has no API key: store credential ${entry.apiKeyRef} (Settings or dsh credentials) or set the environment variable`)
-  return { kind: entry.kind, baseUrl: entry.baseUrl, model: entry.model, ...entry.editModel === undefined ? {} : { editModel: entry.editModel }, apiKey: key, sizeTier: entry.sizeTier, timeoutMs: entry.timeoutMs, pollIntervalMs: entry.pollIntervalMs }
+  return { kind: entry.kind, baseUrl: entry.baseUrl, model: entry.model, ...entry.editModel === undefined ? {} : { editModel: entry.editModel }, apiKey: key, sizeTier: entry.sizeTier, timeoutMs: entry.timeoutMs, pollIntervalMs: entry.pollIntervalMs, ...entry.sizes === undefined ? {} : { sizes: entry.sizes }, ...entry.responseFormat === undefined ? {} : { responseFormat: entry.responseFormat }, ...entry.extraBody === undefined ? {} : { extraBody: entry.extraBody } }
 }
 
 const outcomeSchema = {

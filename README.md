@@ -7,7 +7,7 @@
 给一个主题，得到一套可编辑、版式完整、配图统一的 PPT。
 
 [![DeepSeek Harness](https://img.shields.io/badge/DeepSeek%20Harness-%E2%89%A50.2.1--rc.2-0b5fff)](https://github.com/ColdMagicchess/PTT-Studio)
-[![tests](https://img.shields.io/badge/tests-137%20passed-brightgreen)](tests)
+[![tests](https://img.shields.io/badge/tests-143%20passed-brightgreen)](tests)
 [![license](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![node](https://img.shields.io/badge/node-%E2%89%A522.19-339933)](package.json)
 
@@ -134,11 +134,11 @@ pnpm run pack
 
 然后在 Desktop 中二选一：
 
-1. 打开「插件」页 → 安装第三方插件 → 选择 `dist/dsh-pptx-studio-0.4.0.tgz`；
+1. 打开「插件」页 → 安装第三方插件 → 选择 `dist/dsh-pptx-studio-0.4.1.tgz`；
 2. 或退出 Desktop 后，用自带 CLI 安装：
 
 ```powershell
-"E:\Deepseek harness Desktop\resources\runtime\cli\bin\dsh.cmd" plugin --profile desktop add "E:\path\to\dist\dsh-pptx-studio-0.4.0.tgz"
+"E:\Deepseek harness Desktop\resources\runtime\cli\bin\dsh.cmd" plugin --profile desktop add "E:\path\to\dist\dsh-pptx-studio-0.4.1.tgz"
 ```
 
 重启 Desktop，插件页出现 **PPT 工作室** 即安装成功。
@@ -192,7 +192,8 @@ Key 只写入 DSH 凭据库，不进入配置文件。也可以直接设置同�
 | `textModelMode` / `textModelName` | `session` / 空 | 文字模型：跟随对话、Host 路线或自定义模型 |
 | `visionModelMode` / `visionModelName` | `session` / 空 | 视觉模型：`pptx_review` 用它逐页评审 |
 | `imageBackend` | `agnes` | 当前图片后端；内置 `agnes`、`modelscope` |
-| `imageBackends` | Agnes + ModelScope | 图片后端列表（名称、模型、Base URL、Key 引用） |
+| `imageBackends` | Agnes + ModelScope | 内置图片后端列表（名称、类型、模型、Base URL、Key 引用） |
+| `customImageBackendsJson` | `[]` | 设置页里追加的图片后端，同名会替换内置项 |
 | `customModelsJson` | `[]` | 自定义 OpenAI 兼容模型数组 |
 | `customModelApiKeyRef` | `CUSTOM_API_KEY` | 自定义模型 Key 的凭据名 |
 | `imageMaxPx` | `800` | 嵌入图片的最长边（控制包体大小） |
@@ -216,6 +217,26 @@ src/                  TypeScript 源码（开发用）
 
 `package.json` 的 `files` 精确包含发布需要的文件；`lib/` 是构建产物但**必须入库**，因为 `dsh plugin add github:...` 只拉源码、不运行 `prepare`/构建脚本。
 
+## 使用其他图片模型
+
+除了默认的 Agnes，任何 **OpenAI 兼容的图片接口**都能用，在插件设置页「图片模型 → 自定义图片后端」里加一项，再把「当前图片后端」改成它的 `name`：
+
+```json
+[
+  { "name": "gpt-image", "kind": "openai", "baseUrl": "https://api.openai.com/v1", "model": "gpt-image-1", "apiKeyRef": "OPENAI_IMAGE_KEY" }
+]
+```
+
+| `kind` | 适用接口 | 请求格式 |
+|---|---|---|
+| `openai` | 标准 OpenAI Images API：OpenAI gpt-image / DALL·E、OpenRouter、硅基流动、各类中转网关等 | `POST /images/generations`，`model` + `prompt` + `n` + 像素 `size` |
+| `openai-compatible` | Agnes 这类扩展接口 | 档位 `size`（1K/2K）+ `ratio` + `return_base64` |
+| `modelscope` | ModelScope API-Inference | 异步任务 + 轮询 |
+
+`openai` 类型的可选项：`sizes`（按比例覆盖尺寸，如 `{"16:9": "1792x1024"}`；默认 1536x1024 / 1024x1536 / 1024x1024）、`responseFormat`（`b64_json` 或 `url`）、`extraBody`（附加字段，如 `{"quality": "high"}`）。Key 用设置页的「自定义模型凭据名」写入 `apiKeyRef` 指向的凭据即可，同样只存进 DSH 凭据库。`baseUrl` 必须是 https（本机网关可用 `http://127.0.0.1`）。
+
+注意：`openai` 类型不发送风格参考图（标准接口的参考图走 multipart 编辑端点），插画风格一致性靠 `styleAnchor` 提示词保持。
+
 ## 项目结构
 
 ```text
@@ -230,7 +251,7 @@ src/
   check/              几何/对比度/覆盖率检查
   tools/              6 个模型工具与沙箱写入
   types/host.d.ts     DSH Host API 的最小类型声明
-tests/                vitest 单元测试（137 个）
+tests/                vitest 单元测试（143 个）
 scripts/              端到端与单 deck 开发脚本
 docs/                设置页设计与预览图
 market/              插件市场索引（格式 1）与图标

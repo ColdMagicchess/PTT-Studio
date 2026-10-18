@@ -4,6 +4,11 @@
  * - `openai-compatible`: synchronous `POST {baseUrl}/images/generations`.
  *   Agnes AI (https://api.agnes-ai.cn/v1) uses this with tier sizes plus ratio,
  *   Base64 output and `extra_body.image` for reference images.
+ * - `openai`: the standard OpenAI Images API (`POST {baseUrl}/images/generations`
+ *   with `model`, `prompt`, `n`, pixel `size`). Works with OpenAI gpt-image /
+ *   DALL·E and other providers that follow it; per-aspect sizes, an optional
+ *   `response_format` and provider-specific extra body fields are configurable.
+ *   Reference images are not sent (the standard edit endpoint is multipart).
  * - `modelscope`: ModelScope API-Inference async task API
  *   (https://api-inference.modelscope.cn/v1), polling `/tasks/{id}`; reference
  *   images switch the model to its Edit variant.
@@ -11,7 +16,8 @@
  * Requests use node:https with IPv4 forced: on the reference Windows host the
  * IPv6 route to both providers times out while IPv4 works.
  */
-import { request } from 'node:https'
+import { request as httpRequest } from 'node:http'
+import { request as httpsRequest } from 'node:https'
 import type { Asset } from '../deck/types.ts'
 import { NEGATIVE } from './prompt.ts'
 
@@ -29,7 +35,7 @@ export interface ImageRequest {
 
 /** Backend configuration, validated by the plugin Config schema. */
 export interface ImageBackendConfig {
-  kind: 'openai-compatible' | 'modelscope'
+  kind: 'openai-compatible' | 'openai' | 'modelscope'
   baseUrl: string
   model: string
   /** Model used when reference images are supplied; defaults to `model`. */
@@ -39,7 +45,16 @@ export interface ImageBackendConfig {
   sizeTier: string
   timeoutMs: number
   pollIntervalMs: number
+  /** `openai` kind: size string per aspect ratio; defaults to {@link OPENAI_SIZES}. */
+  sizes?: Partial<Record<Asset['aspect'], string>>
+  /** `openai` kind: `response_format` to request; omitted when unset (gpt-image always returns base64). */
+  responseFormat?: 'b64_json' | 'url'
+  /** `openai` kind: extra JSON body fields merged into every request (quality, style, provider options). */
+  extraBody?: Record<string, unknown>
 }
+
+/** Default sizes for the standard OpenAI Images API (gpt-image-1 accepted sizes). */
+export const OPENAI_SIZES: Record<Asset['aspect'], string> = { '16:9': '1536x1024', '4:3': '1536x1024', '3:4': '1024x1536', '1:1': '1024x1024' }
 
 /** Classified backend failure. */
 export class ImageBackendError extends Error {
@@ -55,6 +70,7 @@ function http(method: 'GET' | 'POST', url: string, headers: Record<string, strin
   return new Promise((resolve, reject) => {
     const u = new URL(url)
     const payload = body === undefined ? undefined : Buffer.from(body, 'utf8')
+    const request = u.protocol === 'http:' ? httpRequest : httpsRequest
     const req = request({
       protocol: u.protocol, host: u.hostname, port: u.port === '' ? undefined : Number(u.port), path: u.pathname + u.search,
       method, family: 4, timeout: timeoutMs, signal,
@@ -89,6 +105,17 @@ export async function generateImage(config: ImageBackendConfig, req: ImageReques
   const base = config.baseUrl.replace(/\/+$/, '')
   const auth = { Authorization: `Bearer ${config.apiKey}`, 'Content-Type': 'application/json' }
   const refs = req.references ?? []
+  if (config.kind === 'openai') {
+    const size = config.sizes?.[req.aspect] ?? OPENAI_SIZES[req.aspect]
+    const body: Record<string, unknown> = {
+      model: config.model, prompt: req.prompt, n: 1, size,
+      ...config.responseFormat === undefined ? {} : { response_format: config.responseFormat },
+      ...config.extraBody ?? {},
+    }
+    const res = await http('POST', `${base}/images/generations`, auth, JSON.stringify(body), config.timeoutMs, req.signal)
+    if (res.status !== 200) fail(res.status, res.body, 'image generation')
+    return imageFromResponse(res.body, config.timeoutMs, req.signal)
+  }
   if (config.kind === 'openai-compatible') {
     const body: Record<string, unknown> = { model: refs.length > 0 ? config.editModel ?? config.model : config.model, prompt: req.prompt, size: config.sizeTier, ratio: req.aspect }
     if (refs.length > 0) body.extra_body = { image: refs, response_format: 'b64_json' }
@@ -118,6 +145,22 @@ export async function generateImage(config: ImageBackendConfig, req: ImageReques
     if (state.task_status === 'FAILED') throw new ImageBackendError(`image task ${taskId} failed`, 200, true)
   }
   throw new ImageBackendError(`image task ${taskId} did not finish within ${config.timeoutMs} ms`, 0, true)
+}
+
+/**
+ * Read the first image of an Images API response: base64 or a URL to download.
+ * @param raw - response body.
+ * @param timeoutMs - download timeout.
+ * @param signal - cancellation.
+ * @returns image bytes.
+ */
+async function imageFromResponse(raw: Buffer, timeoutMs: number, signal: AbortSignal): Promise<Uint8Array> {
+  let parsed: { data?: { b64_json?: string | null; url?: string | null }[] }
+  try { parsed = JSON.parse(raw.toString('utf8')) as typeof parsed } catch { throw new ImageBackendError('image generation returned non-JSON: ' + raw.toString('utf8').slice(0, 200), 200, false) }
+  const item = parsed.data?.[0]
+  if (item?.b64_json) return Buffer.from(item.b64_json, 'base64')
+  if (item?.url) return download(item.url, timeoutMs, signal)
+  throw new ImageBackendError('image generation returned no image', 200, true)
 }
 
 async function download(url: string, timeoutMs: number, signal: AbortSignal): Promise<Uint8Array> {
