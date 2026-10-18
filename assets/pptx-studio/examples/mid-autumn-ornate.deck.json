@@ -1,0 +1,1298 @@
+{
+  "version": 1,
+  "id": "mid-autumn-culture",
+  "title": "中秋：月圆千年",
+  "language": "zh-CN",
+  "design": {
+    "style": "chinese-ink",
+    "complexity": "ornate",
+    "textDensity": "light"
+  },
+  "theme": {
+    "style": "chinese-ink",
+    "colors": {
+      "background": "#F5F0E6",
+      "surface": "#FBF8F1",
+      "primary": "#8B1E1E",
+      "secondary": "#2F4F4F",
+      "accent": "#C9A227",
+      "text": "#2B2B2B",
+      "textMuted": "#6E6352"
+    },
+    "fonts": {
+      "heading": "宋体",
+      "body": "微软雅黑",
+      "latin": "Georgia"
+    },
+    "styleAnchor": "traditional Chinese ink-wash painting aesthetic, rice-paper texture, soft black ink mountains and mist, vermilion seal accents, elegant negative space, muted earthy tones, refined oriental minimalism",
+    "motifs": {
+      "foreground": "osmanthus sprays, plum blossom branches and bamboo leaves",
+      "midground": "faint woven paper texture and soft ink-wash gradients",
+      "background": "tiny repeating cloud scrolls and fine gold dots"
+    },
+    "seed": 20261017,
+    "radius": 10,
+    "highlight": "#C8372D"
+  },
+  "assets": [
+    {
+      "id": "bg-cover",
+      "kind": "background",
+      "aspect": "16:9",
+      "prompt": "a large full moon low on the right side of the frame above distant ink-wash mountains, thin mist drifting along the lower edge, the left side is a calm even surface"
+    },
+    {
+      "id": "bg-section",
+      "kind": "background",
+      "aspect": "16:9",
+      "prompt": "an ink-wash river landscape fading into mist, soft tone along the right edge and the bottom edge, the left two thirds of the frame stay calm and even"
+    },
+    {
+      "id": "bg-content",
+      "kind": "background",
+      "aspect": "16:9",
+      "prompt": "a very subtle rice-paper texture with faint clouds of ink wash near the edges, a large calm even center, low contrast"
+    },
+    {
+      "id": "il-mooncake",
+      "kind": "illustration",
+      "aspect": "4:3",
+      "prompt": "isolated illustration of an ornate mooncake with an engraved flower pattern beside a small teapot",
+      "cutout": "white"
+    }
+  ],
+  "decorations": [
+    {
+      "id": "ink-corner",
+      "backdrop": "white",
+      "pieces": [
+        {
+          "id": "plum-spray",
+          "subject": "corner spray of plum blossoms and slender branches",
+          "role": "corner"
+        },
+        {
+          "id": "bamboo-spray",
+          "subject": "corner spray of bamboo leaves and thin stalks",
+          "role": "corner"
+        },
+        {
+          "id": "pine-spray",
+          "subject": "corner spray of pine needles and gnarled twigs",
+          "role": "corner"
+        },
+        {
+          "id": "lattice-frame",
+          "subject": "corner of a circular lattice frame with openwork rings",
+          "role": "frame"
+        },
+        {
+          "id": "cloud-frame",
+          "subject": "corner of a cloud-pattern frame with curled scrolls",
+          "role": "frame"
+        },
+        {
+          "id": "cloud-strip",
+          "subject": "narrow border strip of repeating cloud scrolls",
+          "role": "border"
+        },
+        {
+          "id": "wave-strip",
+          "subject": "narrow border strip of stylized water ripples",
+          "role": "border"
+        },
+        {
+          "id": "key-strip",
+          "subject": "narrow border strip of key fret meander",
+          "role": "border"
+        },
+        {
+          "id": "bead-divider",
+          "subject": "vertical divider of small linked beads",
+          "role": "divider"
+        }
+      ],
+      "mode": "sheet"
+    },
+    {
+      "id": "ink-accent",
+      "backdrop": "white",
+      "pieces": [
+        {
+          "id": "osmanthus",
+          "subject": "small spray of osmanthus flowers",
+          "role": "accent"
+        },
+        {
+          "id": "chrysanthemum",
+          "subject": "single blooming chrysanthemum with curled petals",
+          "role": "accent"
+        },
+        {
+          "id": "fan",
+          "subject": "small folded paper fan with a painted landscape",
+          "role": "accent"
+        },
+        {
+          "id": "lantern",
+          "subject": "small hanging palace lantern with tassels",
+          "role": "accent"
+        },
+        {
+          "id": "moon-halo",
+          "subject": "thin ring frame like a full moon halo",
+          "role": "frame"
+        },
+        {
+          "id": "gold-dots",
+          "subject": "cluster of tiny scattered gold dots",
+          "role": "scatter"
+        },
+        {
+          "id": "petals",
+          "subject": "handful of drifting osmanthus petals",
+          "role": "scatter"
+        },
+        {
+          "id": "stars",
+          "subject": "cluster of small four-point stars",
+          "role": "scatter"
+        },
+        {
+          "id": "seal",
+          "subject": "small carved seal block with abstract carved lines",
+          "role": "accent"
+        }
+      ],
+      "mode": "sheet"
+    },
+    {
+      "id": "ink-badge",
+      "backdrop": "white",
+      "pieces": [
+        {
+          "id": "double-ring",
+          "subject": "badge base of double concentric rings",
+          "role": "badge"
+        },
+        {
+          "id": "floral-medallion",
+          "subject": "round badge base of swirling floral scrollwork",
+          "role": "badge"
+        },
+        {
+          "id": "diamond-badge",
+          "subject": "diamond badge base with cut corners",
+          "role": "badge"
+        },
+        {
+          "id": "scallop-badge",
+          "subject": "scalloped round badge base",
+          "role": "badge"
+        },
+        {
+          "id": "ribbon",
+          "subject": "short ribbon banner base with folded ends",
+          "role": "badge"
+        },
+        {
+          "id": "teapot",
+          "subject": "small teapot with a rounded body",
+          "role": "accent"
+        },
+        {
+          "id": "mooncake",
+          "subject": "small round mooncake with an engraved floral pattern",
+          "role": "accent"
+        },
+        {
+          "id": "cloud-divider",
+          "subject": "vertical divider of two curled cloud heads",
+          "role": "divider"
+        },
+        {
+          "id": "petal-chain",
+          "subject": "border strip of linked petal rosettes",
+          "role": "border"
+        }
+      ],
+      "mode": "sheet"
+    },
+    {
+      "id": "ink-single",
+      "backdrop": "white",
+      "mode": "single",
+      "styleAnchor": "traditional Chinese ink-wash ornament style, fine ink outlines, vermilion and gold accents, muted earthy tones, refined oriental minimalism",
+      "pieces": [
+        {
+          "id": "porcelain-plate",
+          "subject": "porcelain plate with a painted moon and cloud rim",
+          "role": "accent"
+        },
+        {
+          "id": "wine-cup",
+          "subject": "small wine cup with a flared rim",
+          "role": "accent"
+        },
+        {
+          "id": "incense-burner",
+          "subject": "incense burner with a domed lid",
+          "role": "accent"
+        },
+        {
+          "id": "brush-rest",
+          "subject": "brush rest shaped like a distant mountain",
+          "role": "accent"
+        }
+      ]
+    }
+  ],
+  "slides": [
+    {
+      "id": "s01",
+      "layout": "cover",
+      "visual": "满幅水墨底：远山与薄雾中一轮满月；四角是镜像的梅枝与竹叶，上下边带是云纹与波纹，散点是金点与桂花花瓣，标题放在中央竖条饰板中",
+      "background": {
+        "asset": "bg-cover"
+      },
+      "elements": [
+        {
+          "type": "decor",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "w": 12,
+            "h": 10
+          },
+          "piece": "ink-corner/plum-spray"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 88,
+            "y": 0,
+            "w": 12,
+            "h": 10
+          },
+          "piece": "ink-corner/plum-spray",
+          "flipH": true
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 0,
+            "y": 80,
+            "w": 12,
+            "h": 10
+          },
+          "piece": "ink-corner/bamboo-spray"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 88,
+            "y": 80,
+            "w": 12,
+            "h": 10
+          },
+          "piece": "ink-corner/bamboo-spray",
+          "flipH": true
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 20,
+            "y": 11,
+            "w": 60,
+            "h": 5
+          },
+          "piece": "ink-corner/cloud-strip"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 20,
+            "y": 91,
+            "w": 60,
+            "h": 5
+          },
+          "piece": "ink-corner/wave-strip"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 18,
+            "y": 18,
+            "w": 4,
+            "h": 4
+          },
+          "piece": "ink-accent/gold-dots"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 78,
+            "y": 18,
+            "w": 4,
+            "h": 4
+          },
+          "piece": "ink-accent/petals"
+        },
+        {
+          "type": "panel",
+          "box": {
+            "x": 36,
+            "y": 24,
+            "w": 28,
+            "h": 56
+          },
+          "panel": "banner",
+          "fill": "surface",
+          "opacity": 0.9
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 42,
+            "y": 26,
+            "w": 16,
+            "h": 40
+          },
+          "role": "display",
+          "text": "月圆千年",
+          "align": "center",
+          "color": "primary",
+          "bold": true,
+          "vertical": true
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 38,
+            "y": 67,
+            "w": 24,
+            "h": 6
+          },
+          "role": "subtitle",
+          "text": "中秋节的文化密码",
+          "align": "center",
+          "color": "text"
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 39,
+            "y": 73,
+            "w": 22,
+            "h": 5
+          },
+          "role": "caption",
+          "text": "2026 · 文化讲堂",
+          "align": "center",
+          "color": "textMuted"
+        }
+      ],
+      "notes": "开场：今天我们从一轮月亮说起，看中秋如何从祭月仪式走到今天的团圆节。"
+    },
+    {
+      "id": "s02",
+      "layout": "section",
+      "visual": "左侧饰板放大号章节编号与标题；右缘与底边由云纹边带、印章与散点补足，背景是水墨江景",
+      "background": {
+        "asset": "bg-section"
+      },
+      "elements": [
+        {
+          "type": "decor",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "w": 12,
+            "h": 10
+          },
+          "piece": "ink-corner/lattice-frame"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 88,
+            "y": 0,
+            "w": 12,
+            "h": 10
+          },
+          "piece": "ink-corner/lattice-frame",
+          "flipH": true
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 0,
+            "y": 80,
+            "w": 12,
+            "h": 10
+          },
+          "piece": "ink-corner/bamboo-spray"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 88,
+            "y": 80,
+            "w": 12,
+            "h": 10
+          },
+          "piece": "ink-corner/bamboo-spray",
+          "flipH": true,
+          "flipV": true
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 20,
+            "y": 11,
+            "w": 60,
+            "h": 5
+          },
+          "piece": "ink-corner/key-strip"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 66,
+            "y": 24,
+            "w": 5,
+            "h": 5
+          },
+          "piece": "ink-accent/gold-dots"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 78,
+            "y": 34,
+            "w": 5,
+            "h": 5
+          },
+          "piece": "ink-accent/stars"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 62,
+            "y": 60,
+            "w": 6,
+            "h": 6
+          },
+          "piece": "ink-accent/seal"
+        },
+        {
+          "type": "panel",
+          "box": {
+            "x": 5,
+            "y": 26,
+            "w": 50,
+            "h": 48
+          },
+          "panel": "panel",
+          "fill": "surface",
+          "opacity": 0.9
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 9,
+            "y": 30,
+            "w": 20,
+            "h": 16
+          },
+          "role": "number",
+          "text": "壹",
+          "color": "primary",
+          "bold": true
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 9,
+            "y": 48,
+            "w": 42,
+            "h": 12
+          },
+          "role": "title",
+          "text": "从祭月到赏月",
+          "bold": true
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 9,
+            "y": 62,
+            "w": 42,
+            "h": 8
+          },
+          "role": "subtitle",
+          "text": "节日的起源",
+          "color": "textMuted"
+        }
+      ]
+    },
+    {
+      "id": "s03",
+      "layout": "cards",
+      "visual": "三张带花边描边和角花的卡片，四角是镜像的梅枝与竹叶，卡片缝隙有珠链分隔纹，标题带旁点缀星点与花瓣",
+      "background": {
+        "asset": "bg-content"
+      },
+      "elements": [
+        {
+          "type": "decor",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "w": 12,
+            "h": 10
+          },
+          "piece": "ink-corner/plum-spray"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 88,
+            "y": 0,
+            "w": 12,
+            "h": 10
+          },
+          "piece": "ink-corner/plum-spray",
+          "flipH": true
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 0,
+            "y": 80,
+            "w": 12,
+            "h": 10
+          },
+          "piece": "ink-corner/bamboo-spray"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 88,
+            "y": 80,
+            "w": 12,
+            "h": 10
+          },
+          "piece": "ink-corner/bamboo-spray",
+          "flipH": true
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 33.45,
+            "y": 28,
+            "w": 2.8,
+            "h": 52
+          },
+          "piece": "ink-corner/bead-divider"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 63.8,
+            "y": 28,
+            "w": 2.8,
+            "h": 52
+          },
+          "piece": "ink-corner/bead-divider"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 25,
+            "y": 21,
+            "w": 4,
+            "h": 3
+          },
+          "piece": "ink-accent/stars"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 71,
+            "y": 21,
+            "w": 4,
+            "h": 3
+          },
+          "piece": "ink-accent/petals"
+        },
+        {
+          "type": "panel",
+          "box": {
+            "x": 8,
+            "y": 10,
+            "w": 84,
+            "h": 12
+          },
+          "panel": "panel",
+          "fill": "surface"
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 8,
+            "y": 11,
+            "w": 84,
+            "h": 10
+          },
+          "role": "title",
+          "text": "三个朝代，定下中秋",
+          "bold": true,
+          "valign": "middle"
+        },
+        {
+          "type": "panel",
+          "box": {
+            "x": 6,
+            "y": 26,
+            "w": 27.3,
+            "h": 54
+          },
+          "panel": "panel",
+          "fill": "surface",
+          "opacity": 0.92
+        },
+        {
+          "type": "icon",
+          "box": {
+            "x": 16.4,
+            "y": 31,
+            "w": 6.5,
+            "h": 11.6
+          },
+          "name": "flag",
+          "color": "primary",
+          "badge": "background"
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 8.5,
+            "y": 48,
+            "w": 22.3,
+            "h": 9
+          },
+          "role": "heading",
+          "text": "周代 · 祭月",
+          "align": "center",
+          "bold": true,
+          "color": "primary"
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 8.5,
+            "y": 59,
+            "w": 22.3,
+            "h": 18
+          },
+          "role": "body",
+          "text": "帝王秋分夕月",
+          "align": "center"
+        },
+        {
+          "type": "panel",
+          "box": {
+            "x": 36.35,
+            "y": 26,
+            "w": 27.3,
+            "h": 54
+          },
+          "panel": "panel",
+          "fill": "surface",
+          "opacity": 0.92
+        },
+        {
+          "type": "icon",
+          "box": {
+            "x": 46.75,
+            "y": 31,
+            "w": 6.5,
+            "h": 11.6
+          },
+          "name": "star",
+          "color": "primary",
+          "badge": "background"
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 38.85,
+            "y": 48,
+            "w": 22.3,
+            "h": 9
+          },
+          "role": "heading",
+          "text": "唐代 · 赏月",
+          "align": "center",
+          "bold": true,
+          "color": "primary"
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 38.85,
+            "y": 59,
+            "w": 22.3,
+            "h": 18
+          },
+          "role": "body",
+          "text": "文人登楼望月",
+          "align": "center"
+        },
+        {
+          "type": "panel",
+          "box": {
+            "x": 66.7,
+            "y": 26,
+            "w": 27.3,
+            "h": 54
+          },
+          "panel": "panel",
+          "fill": "surface",
+          "opacity": 0.92
+        },
+        {
+          "type": "icon",
+          "box": {
+            "x": 77.10000000000001,
+            "y": 31,
+            "w": 6.5,
+            "h": 11.6
+          },
+          "name": "gift",
+          "color": "primary",
+          "badge": "background"
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 69.2,
+            "y": 48,
+            "w": 22.3,
+            "h": 9
+          },
+          "role": "heading",
+          "text": "宋代 · 定节",
+          "align": "center",
+          "bold": true,
+          "color": "primary"
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 69.2,
+            "y": 59,
+            "w": 22.3,
+            "h": 18
+          },
+          "role": "body",
+          "text": "八月十五成俗",
+          "align": "center"
+        }
+      ],
+      "notes": "周代帝王在秋分祭月；唐代文人赏月成风；到了宋代，八月十五正式成为中秋节。"
+    },
+    {
+      "id": "s04",
+      "layout": "image-bullets",
+      "visual": "左侧放去底的月饼插画，直接融入背景、不套卡，右侧饰板上三条要点；四角云框与竹叶，两栏之间一条珠链分隔",
+      "background": {
+        "asset": "bg-content"
+      },
+      "elements": [
+        {
+          "type": "decor",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "w": 12,
+            "h": 10
+          },
+          "piece": "ink-corner/cloud-frame"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 88,
+            "y": 0,
+            "w": 12,
+            "h": 10
+          },
+          "piece": "ink-corner/cloud-frame",
+          "flipH": true
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 0,
+            "y": 80,
+            "w": 12,
+            "h": 10
+          },
+          "piece": "ink-corner/bamboo-spray"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 88,
+            "y": 80,
+            "w": 12,
+            "h": 10
+          },
+          "piece": "ink-corner/bamboo-spray",
+          "flipH": true
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 45.15,
+            "y": 26,
+            "w": 2.7,
+            "h": 52
+          },
+          "piece": "ink-corner/bead-divider"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 16,
+            "y": 21,
+            "w": 4,
+            "h": 3
+          },
+          "piece": "ink-accent/gold-dots"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 78,
+            "y": 21,
+            "w": 4,
+            "h": 3
+          },
+          "piece": "ink-accent/petals"
+        },
+        {
+          "type": "panel",
+          "box": {
+            "x": 8,
+            "y": 10,
+            "w": 84,
+            "h": 12
+          },
+          "panel": "panel",
+          "fill": "surface"
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 8,
+            "y": 11,
+            "w": 84,
+            "h": 10
+          },
+          "role": "title",
+          "text": "一块月饼，三层寓意",
+          "bold": true,
+          "valign": "middle"
+        },
+        {
+          "type": "image",
+          "box": {
+            "x": 6,
+            "y": 22,
+            "w": 40,
+            "h": 70
+          },
+          "asset": "il-mooncake",
+          "fit": "contain"
+        },
+        {
+          "type": "panel",
+          "box": {
+            "x": 48,
+            "y": 25,
+            "w": 47,
+            "h": 55
+          },
+          "panel": "panel",
+          "fill": "surface",
+          "opacity": 0.92
+        },
+        {
+          "type": "bullets",
+          "box": {
+            "x": 52,
+            "y": 32,
+            "w": 40,
+            "h": 44
+          },
+          "role": "body",
+          "items": [
+            "圆形象征团圆",
+            "馅料寄托丰收",
+            "赠饼传递思念"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "s05",
+      "layout": "big-number",
+      "visual": "左侧圆窗饰板放大数字，右侧饰板写说明，底部一条结论带收束主题；四角梅枝竹叶，圆窗与右栏之间一条云头分隔",
+      "background": {
+        "asset": "bg-content"
+      },
+      "elements": [
+        {
+          "type": "decor",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "w": 12,
+            "h": 10
+          },
+          "piece": "ink-corner/plum-spray"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 88,
+            "y": 0,
+            "w": 12,
+            "h": 10
+          },
+          "piece": "ink-corner/plum-spray",
+          "flipH": true
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 0,
+            "y": 80,
+            "w": 12,
+            "h": 10
+          },
+          "piece": "ink-corner/bamboo-spray"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 88,
+            "y": 80,
+            "w": 12,
+            "h": 10
+          },
+          "piece": "ink-corner/bamboo-spray",
+          "flipH": true
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 42.2,
+            "y": 30,
+            "w": 5,
+            "h": 48
+          },
+          "piece": "ink-badge/cloud-divider"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 25,
+            "y": 21,
+            "w": 4,
+            "h": 3
+          },
+          "piece": "ink-accent/stars"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 70,
+            "y": 21,
+            "w": 4,
+            "h": 3
+          },
+          "piece": "ink-accent/gold-dots"
+        },
+        {
+          "type": "panel",
+          "box": {
+            "x": 8,
+            "y": 10,
+            "w": 84,
+            "h": 12
+          },
+          "panel": "panel",
+          "fill": "surface"
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 8,
+            "y": 11,
+            "w": 84,
+            "h": 10
+          },
+          "role": "title",
+          "text": "中秋已流传千年",
+          "bold": true,
+          "valign": "middle"
+        },
+        {
+          "type": "panel",
+          "box": {
+            "x": 10,
+            "y": 27,
+            "w": 32,
+            "h": 51
+          },
+          "panel": "medallion",
+          "fill": "surface",
+          "opacity": 0.95
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 12,
+            "y": 40,
+            "w": 28,
+            "h": 20
+          },
+          "role": "number",
+          "text": "1000+",
+          "align": "center",
+          "color": "highlight",
+          "bold": true
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 12,
+            "y": 62,
+            "w": 28,
+            "h": 8
+          },
+          "role": "caption",
+          "text": "年 · 自宋代算起",
+          "align": "center"
+        },
+        {
+          "type": "panel",
+          "box": {
+            "x": 48,
+            "y": 30,
+            "w": 47,
+            "h": 50
+          },
+          "panel": "panel",
+          "fill": "surface",
+          "opacity": 0.92
+        },
+        {
+          "type": "bullets",
+          "box": {
+            "x": 52,
+            "y": 36,
+            "w": 40,
+            "h": 40
+          },
+          "role": "body",
+          "items": [
+            "2008 年列为法定假日",
+            "2006 年入选国家非遗"
+          ]
+        },
+        {
+          "type": "panel",
+          "id": "conclusion-bar",
+          "box": {
+            "x": 14,
+            "y": 81,
+            "w": 72,
+            "h": 11
+          },
+          "panel": "panel",
+          "fill": "surface",
+          "opacity": 0.9
+        },
+        {
+          "type": "text",
+          "id": "conclusion-text",
+          "box": {
+            "x": 17,
+            "y": 82,
+            "w": 66,
+            "h": 8
+          },
+          "role": "body",
+          "text": "从宋代算起，中秋已成为全民节日",
+          "align": "center"
+        }
+      ]
+    },
+    {
+      "id": "s06",
+      "layout": "closing",
+      "visual": "与封面呼应的月下远景，四角镜像梅枝竹叶，上下边带云纹与波纹，祝福语放在竖条饰板中，底部中央点缀瓷盘与酒杯两件主题小件",
+      "background": {
+        "asset": "bg-cover"
+      },
+      "elements": [
+        {
+          "type": "decor",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "w": 12,
+            "h": 10
+          },
+          "piece": "ink-corner/plum-spray"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 88,
+            "y": 0,
+            "w": 12,
+            "h": 10
+          },
+          "piece": "ink-corner/plum-spray",
+          "flipH": true
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 0,
+            "y": 80,
+            "w": 12,
+            "h": 10
+          },
+          "piece": "ink-corner/bamboo-spray"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 88,
+            "y": 80,
+            "w": 12,
+            "h": 10
+          },
+          "piece": "ink-corner/bamboo-spray",
+          "flipH": true
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 20,
+            "y": 11,
+            "w": 60,
+            "h": 5
+          },
+          "piece": "ink-corner/cloud-strip"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 20,
+            "y": 91,
+            "w": 60,
+            "h": 5
+          },
+          "piece": "ink-corner/wave-strip"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 18,
+            "y": 18,
+            "w": 4,
+            "h": 4
+          },
+          "piece": "ink-accent/gold-dots"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 78,
+            "y": 18,
+            "w": 4,
+            "h": 4
+          },
+          "piece": "ink-accent/stars"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 45,
+            "y": 84,
+            "w": 6,
+            "h": 6
+          },
+          "piece": "ink-single/porcelain-plate"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 52,
+            "y": 84,
+            "w": 5,
+            "h": 6
+          },
+          "piece": "ink-single/wine-cup"
+        },
+        {
+          "type": "panel",
+          "box": {
+            "x": 36,
+            "y": 24,
+            "w": 28,
+            "h": 56
+          },
+          "panel": "banner",
+          "fill": "surface",
+          "opacity": 0.9
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 42,
+            "y": 26,
+            "w": 16,
+            "h": 40
+          },
+          "role": "display",
+          "text": "花好月圆",
+          "align": "center",
+          "color": "primary",
+          "bold": true,
+          "vertical": true
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 38,
+            "y": 67,
+            "w": 24,
+            "h": 6
+          },
+          "role": "subtitle",
+          "text": "中秋快乐",
+          "align": "center"
+        }
+      ]
+    }
+  ]
+}

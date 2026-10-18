@@ -1,0 +1,1068 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dsh-pptx-studio/deck.schema.json",
+  "title": "PPT Studio deck",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "id",
+    "title",
+    "language",
+    "design",
+    "theme",
+    "slides"
+  ],
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "maxLength": 64
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "language": {
+      "type": "string",
+      "minLength": 2
+    },
+    "design": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "style",
+        "complexity",
+        "textDensity"
+      ],
+      "properties": {
+        "style": {
+          "type": "string",
+          "minLength": 1
+        },
+        "complexity": {
+          "enum": [
+            "minimal",
+            "simple",
+            "balanced",
+            "rich",
+            "ornate"
+          ]
+        },
+        "textDensity": {
+          "enum": [
+            "light",
+            "medium",
+            "dense"
+          ]
+        }
+      }
+    },
+    "theme": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "style",
+        "colors",
+        "fonts",
+        "styleAnchor",
+        "seed"
+      ],
+      "properties": {
+        "style": {
+          "type": "string"
+        },
+        "colors": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "background",
+            "surface",
+            "primary",
+            "secondary",
+            "accent",
+            "text",
+            "textMuted"
+          ],
+          "properties": {
+            "background": {
+              "type": "string",
+              "pattern": "^#[0-9A-Fa-f]{6}$"
+            },
+            "surface": {
+              "type": "string",
+              "pattern": "^#[0-9A-Fa-f]{6}$"
+            },
+            "primary": {
+              "type": "string",
+              "pattern": "^#[0-9A-Fa-f]{6}$"
+            },
+            "secondary": {
+              "type": "string",
+              "pattern": "^#[0-9A-Fa-f]{6}$"
+            },
+            "accent": {
+              "type": "string",
+              "pattern": "^#[0-9A-Fa-f]{6}$"
+            },
+            "text": {
+              "type": "string",
+              "pattern": "^#[0-9A-Fa-f]{6}$"
+            },
+            "textMuted": {
+              "type": "string",
+              "pattern": "^#[0-9A-Fa-f]{6}$"
+            }
+          }
+        },
+        "fonts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "heading",
+            "body"
+          ],
+          "properties": {
+            "heading": {
+              "type": "string"
+            },
+            "body": {
+              "type": "string"
+            },
+            "latin": {
+              "type": "string"
+            }
+          }
+        },
+        "styleAnchor": {
+          "type": "string",
+          "minLength": 20
+        },
+        "seed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "radius": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 48
+        },
+        "highlight": {
+          "type": "string",
+          "pattern": "^#[0-9A-Fa-f]{6}$"
+        },
+        "motifs": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "foreground",
+            "background"
+          ],
+          "properties": {
+            "foreground": {
+              "type": "string",
+              "minLength": 3
+            },
+            "midground": {
+              "type": "string",
+              "minLength": 3
+            },
+            "background": {
+              "type": "string",
+              "minLength": 3
+            }
+          }
+        }
+      }
+    },
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "kind",
+          "aspect"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+          },
+          "kind": {
+            "enum": [
+              "background",
+              "illustration"
+            ]
+          },
+          "prompt": {
+            "type": "string"
+          },
+          "aspect": {
+            "enum": [
+              "16:9",
+              "4:3",
+              "3:4",
+              "1:1"
+            ]
+          },
+          "onColor": {
+            "enum": [
+              "background",
+              "surface"
+            ]
+          },
+          "file": {
+            "type": "string"
+          },
+          "cutout": {
+            "enum": [
+              "white",
+              "black"
+            ]
+          }
+        },
+        "anyOf": [
+          {
+            "required": [
+              "prompt"
+            ]
+          },
+          {
+            "required": [
+              "file"
+            ]
+          }
+        ]
+      }
+    },
+    "slides": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "layout",
+          "visual",
+          "elements"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "layout": {
+            "enum": [
+              "cover",
+              "section",
+              "agenda",
+              "bullets-image",
+              "image-bullets",
+              "bullets",
+              "two-column",
+              "cards",
+              "big-number",
+              "timeline",
+              "process",
+              "chart",
+              "comparison",
+              "table",
+              "quote",
+              "image-full",
+              "closing"
+            ]
+          },
+          "visual": {
+            "type": "string",
+            "minLength": 1
+          },
+          "background": {
+            "oneOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "asset"
+                ],
+                "properties": {
+                  "asset": {
+                    "type": "string"
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "color"
+                ],
+                "properties": {
+                  "color": {
+                    "$ref": "#/$defs/color"
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "gradient"
+                ],
+                "properties": {
+                  "gradient": {
+                    "type": "array",
+                    "minItems": 2,
+                    "maxItems": 2,
+                    "items": {
+                      "$ref": "#/$defs/color"
+                    }
+                  },
+                  "angle": {
+                    "type": "number"
+                  }
+                }
+              }
+            ]
+          },
+          "elements": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/element"
+            }
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "pageNumbers": {
+      "type": "boolean"
+    },
+    "decorations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "backdrop",
+          "pieces"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+          },
+          "backdrop": {
+            "enum": [
+              "white",
+              "black"
+            ]
+          },
+          "pieces": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 12,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "subject",
+                "role"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+                },
+                "subject": {
+                  "type": "string",
+                  "minLength": 3
+                },
+                "role": {
+                  "enum": [
+                    "corner",
+                    "border",
+                    "divider",
+                    "accent",
+                    "scatter",
+                    "frame",
+                    "badge"
+                  ]
+                }
+              }
+            }
+          },
+          "files": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "sheet": {
+            "type": "string"
+          },
+          "mode": {
+            "enum": [
+              "sheet",
+              "single"
+            ]
+          },
+          "styleAnchor": {
+            "type": "string",
+            "minLength": 3
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "color": {
+      "type": "string",
+      "pattern": "^(#[0-9A-Fa-f]{6}|background|surface|primary|secondary|accent|text|textMuted|highlight)$"
+    },
+    "box": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "x",
+        "y",
+        "w",
+        "h"
+      ],
+      "properties": {
+        "x": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "y": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "w": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 100
+        },
+        "h": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 100
+        }
+      }
+    },
+    "run": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "text"
+      ],
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "color": {
+          "$ref": "#/$defs/color"
+        },
+        "bold": {
+          "type": "boolean"
+        },
+        "italic": {
+          "type": "boolean"
+        }
+      }
+    },
+    "element": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "box",
+            "role",
+            "text"
+          ],
+          "properties": {
+            "type": {
+              "const": "text"
+            },
+            "id": {
+              "type": "string"
+            },
+            "box": {
+              "$ref": "#/$defs/box"
+            },
+            "role": {
+              "enum": [
+                "display",
+                "title",
+                "subtitle",
+                "heading",
+                "body",
+                "number",
+                "caption"
+              ]
+            },
+            "text": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "$ref": "#/$defs/run"
+                  }
+                }
+              ]
+            },
+            "align": {
+              "enum": [
+                "left",
+                "center",
+                "right"
+              ]
+            },
+            "valign": {
+              "enum": [
+                "top",
+                "middle",
+                "bottom"
+              ]
+            },
+            "color": {
+              "$ref": "#/$defs/color"
+            },
+            "bold": {
+              "type": "boolean"
+            },
+            "italic": {
+              "type": "boolean"
+            },
+            "size": {
+              "type": "number",
+              "minimum": 6,
+              "maximum": 200
+            },
+            "autoFit": {
+              "type": "boolean"
+            },
+            "vertical": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "box",
+            "items"
+          ],
+          "properties": {
+            "type": {
+              "const": "bullets"
+            },
+            "id": {
+              "type": "string"
+            },
+            "box": {
+              "$ref": "#/$defs/box"
+            },
+            "role": {
+              "enum": [
+                "display",
+                "title",
+                "subtitle",
+                "heading",
+                "body",
+                "number",
+                "caption"
+              ]
+            },
+            "items": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "text"
+                    ],
+                    "properties": {
+                      "text": {
+                        "type": "string"
+                      },
+                      "level": {
+                        "enum": [
+                          0,
+                          1
+                        ]
+                      },
+                      "icon": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "marker": {
+              "enum": [
+                "dot",
+                "number",
+                "none",
+                "icon"
+              ]
+            },
+            "color": {
+              "$ref": "#/$defs/color"
+            },
+            "size": {
+              "type": "number",
+              "minimum": 6,
+              "maximum": 200
+            },
+            "autoFit": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "box",
+            "shape"
+          ],
+          "properties": {
+            "type": {
+              "const": "shape"
+            },
+            "id": {
+              "type": "string"
+            },
+            "box": {
+              "$ref": "#/$defs/box"
+            },
+            "shape": {
+              "enum": [
+                "rect",
+                "roundRect",
+                "ellipse",
+                "line",
+                "arrow",
+                "triangle",
+                "chevron",
+                "diamond"
+              ]
+            },
+            "fill": {
+              "$ref": "#/$defs/color"
+            },
+            "opacity": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "line": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "color": {
+                  "$ref": "#/$defs/color"
+                },
+                "width": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 20
+                },
+                "dash": {
+                  "enum": [
+                    "solid",
+                    "dash",
+                    "dot"
+                  ]
+                },
+                "double": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "shadow": {
+              "type": "boolean"
+            },
+            "rotate": {
+              "type": "number"
+            },
+            "decor": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "box"
+          ],
+          "properties": {
+            "type": {
+              "const": "image"
+            },
+            "id": {
+              "type": "string"
+            },
+            "box": {
+              "$ref": "#/$defs/box"
+            },
+            "asset": {
+              "type": "string"
+            },
+            "path": {
+              "type": "string"
+            },
+            "fit": {
+              "enum": [
+                "contain",
+                "cover"
+              ]
+            },
+            "decor": {
+              "type": "boolean"
+            }
+          },
+          "oneOf": [
+            {
+              "required": [
+                "asset"
+              ]
+            },
+            {
+              "required": [
+                "path"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "box",
+            "name"
+          ],
+          "properties": {
+            "type": {
+              "const": "icon"
+            },
+            "id": {
+              "type": "string"
+            },
+            "box": {
+              "$ref": "#/$defs/box"
+            },
+            "name": {
+              "type": "string"
+            },
+            "color": {
+              "$ref": "#/$defs/color"
+            },
+            "badge": {
+              "$ref": "#/$defs/color"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "box",
+            "chart",
+            "categories",
+            "series"
+          ],
+          "properties": {
+            "type": {
+              "const": "chart"
+            },
+            "id": {
+              "type": "string"
+            },
+            "box": {
+              "$ref": "#/$defs/box"
+            },
+            "chart": {
+              "enum": [
+                "bar",
+                "barH",
+                "line",
+                "pie",
+                "doughnut",
+                "area"
+              ]
+            },
+            "categories": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string"
+              }
+            },
+            "series": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "name",
+                  "values"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "values": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    }
+                  }
+                }
+              }
+            },
+            "legend": {
+              "type": "boolean"
+            },
+            "dataLabels": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "box",
+            "header",
+            "rows"
+          ],
+          "properties": {
+            "type": {
+              "const": "table"
+            },
+            "id": {
+              "type": "string"
+            },
+            "box": {
+              "$ref": "#/$defs/box"
+            },
+            "header": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string"
+              }
+            },
+            "rows": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "colWidths": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "box",
+            "panel"
+          ],
+          "properties": {
+            "type": {
+              "const": "panel"
+            },
+            "id": {
+              "type": "string"
+            },
+            "box": {
+              "$ref": "#/$defs/box"
+            },
+            "panel": {
+              "enum": [
+                "panel",
+                "banner",
+                "medallion",
+                "plaque"
+              ]
+            },
+            "fill": {
+              "$ref": "#/$defs/color"
+            },
+            "opacity": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "accent": {
+              "$ref": "#/$defs/color"
+            },
+            "corners": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "box",
+            "piece"
+          ],
+          "properties": {
+            "type": {
+              "const": "decor"
+            },
+            "id": {
+              "type": "string"
+            },
+            "box": {
+              "$ref": "#/$defs/box"
+            },
+            "piece": {
+              "type": "string",
+              "pattern": "^[a-z0-9]+(-[a-z0-9]+)*/[a-z0-9]+(-[a-z0-9]+)*$"
+            },
+            "flipH": {
+              "type": "boolean"
+            },
+            "flipV": {
+              "type": "boolean"
+            },
+            "rotate": {
+              "type": "number"
+            },
+            "opacity": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          }
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "type": "object",
+        "required": [
+          "design"
+        ],
+        "properties": {
+          "design": {
+            "type": "object",
+            "required": [
+              "complexity"
+            ],
+            "properties": {
+              "complexity": {
+                "const": "ornate"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "theme": {
+            "type": "object",
+            "required": [
+              "motifs"
+            ],
+            "properties": {
+              "motifs": {
+                "type": "object",
+                "required": [
+                  "foreground",
+                  "midground",
+                  "background"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "type": "object",
+        "required": [
+          "design"
+        ],
+        "properties": {
+          "design": {
+            "type": "object",
+            "required": [
+              "complexity"
+            ],
+            "properties": {
+              "complexity": {
+                "const": "rich"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "theme": {
+            "type": "object",
+            "required": [
+              "motifs"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

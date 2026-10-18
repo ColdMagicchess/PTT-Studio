@@ -1,0 +1,391 @@
+/**
+ * Settings page for dsh-pptx-studio, mounted in the Plugins page under the
+ * plugin's config slot. It edits the flat model-selection fields of the Host
+ * config and writes API keys through the credentials domain; keys never enter
+ * the config document or a settings response.
+ *
+ * The bundle is a closure factory for the Host client loader
+ * (`window.__ModuleLoader__.load`): react and the UI primitives come from the
+ * loader's module table, everything else is bundled by tsdown.
+ *
+ * @module dsh-pptx-studio/client
+ */
+import * as React from 'react'
+import {
+  SettingsForm,
+  SettingsFormModel,
+  SettingsSecretField,
+  SettingsValueField,
+  settingsTextField,
+} from '@deepseek-ai/dsh-client-ui-primitives'
+
+/** Profile entry id of the Host plugin; the config namespace this page edits. */
+const ENTRY_ID = 'pptx-studio'
+/** Bundle names the Plugins page keys its config slot by. */
+const BUNDLE_NAMES = ['dsh-pptx-studio', '@deepseek-ai/dsh-pptx-studio']
+/** Locale namespace this page owns. */
+const NS = 'settings.pptx-studio'
+/** Services the page reads from the browser plugin context. */
+export const inject = ['slots', 'locale', 'configForms']
+
+/** Fields of the Host config this page edits. */
+const FIELDS = ['textModelMode', 'textModelName', 'visionModelMode', 'visionModelName', 'imageBackend', 'customModelsJson', 'customModelApiKeyRef'] as const
+/** Write-only credential controls. */
+const SECRETS = ['agnesKey', 'modelscopeKey', 'customKey'] as const
+/** Credential references the page always reports on. */
+const BASE_REFS = ['AGNES_API_KEY', 'MODELSCOPE_API_KEY']
+/** Model mode values the Host accepts. */
+const MODES = ['session', 'route', 'custom']
+/** Default credential reference for custom models. */
+const DEFAULT_CUSTOM_REF = 'CUSTOM_API_KEY'
+
+/** Simplified Chinese copy. */
+const zh = {
+  summary: '选择文字、视觉与图片模型，填写自定义模型和 API Key。',
+  intro: '文字模型与视觉模型默认跟随当前对话；也可以指定 Host 已配置的路线（provider/model），或使用下面的自定义 OpenAI 兼容模型。Key 只写入 DSH 凭据库，不会写进配置。',
+  textSection: '文字模型',
+  visionSection: '视觉模型',
+  imageSection: '图片模型',
+  customSection: '自定义模型',
+  credentialSection: 'API Key',
+  textMode: '文字模型来源',
+  textModeHint: 'session = 当前对话模型（默认）；route = Host 已配置的 provider/model；custom = 下面的自定义模型名。',
+  textName: '文字模型路线或名称',
+  textNameHint: 'route 写 provider/model，例如 deepseek-account/deepseek-flash；custom 写自定义模型的 name；session 留空。',
+  visionMode: '视觉模型来源',
+  visionModeHint: 'session = 当前对话模型（默认）；route / custom 与文字模型相同。视觉评审在后续版本启用。',
+  visionName: '视觉模型路线或名称',
+  visionNameHint: 'route 写 provider/model；custom 写自定义模型的 name。',
+  imageBackend: '当前图片后端',
+  imageBackendHint: '默认 agnes（Agnes AI 国内站）；也可填 modelscope。图片后端列表在插件配置文件里维护。',
+  customModels: '自定义模型（JSON 数组）',
+  customModelsHint: '每项：{"name":"my-model","baseUrl":"https://example.com/v1","model":"gpt-4o-mini","apiKeyRef":"MY_KEY","api":"openai-chat"}。保存时会校验 JSON 与必填字段。',
+  customRef: '自定义模型凭据名',
+  customRefHint: '自定义模型 apiKeyRef 使用的凭据名，例如 MY_KEY；下面的输入框会写入这个凭据。',
+  agnesKey: 'Agnes API Key',
+  agnesKeyHint: '留空表示不修改；填入后写入 DSH 凭据 AGNES_API_KEY。',
+  modelscopeKey: 'ModelScope API Key',
+  modelscopeKeyHint: '留空表示不修改；填入后写入 DSH 凭据 MODELSCOPE_API_KEY。',
+  customKey: '自定义模型 API Key',
+  customKeyHint: '留空表示不修改；填入后写入上面「自定义模型凭据名」指向的凭据。',
+  configured: '已配置',
+  notConfigured: '未配置',
+  overridden: '已修改',
+  reset: '恢复默认',
+  invalid: '格式不正确，请检查后再保存。',
+  invalidJson: '需要合法的 JSON 数组，每项含 name、baseUrl、model、apiKeyRef。',
+  invalidMode: '只能填 session、route 或 custom。',
+  invalidRef: '凭据名只能包含字母、数字与下划线，且不能以数字开头。',
+  save: '保存',
+  saving: '保存中…',
+  saveFailed: '保存失败，请检查字段后重试。',
+  readOnly: '当前部署的设置是只读的。',
+  unavailable: '插件当前未加载，暂时无法配置。',
+}
+
+/** English copy. */
+const en = {
+  summary: 'Choose text, vision and image models, and store API keys.',
+  intro: 'Text and vision models follow the current conversation by default. You can also name a configured Host route (provider/model) or use an OpenAI-compatible custom model below. Keys go to the DSH credentials store and never into the config document.',
+  textSection: 'Text model',
+  visionSection: 'Vision model',
+  imageSection: 'Image model',
+  customSection: 'Custom models',
+  credentialSection: 'API keys',
+  textMode: 'Text model source',
+  textModeHint: 'session = the conversation model (default); route = a configured Host provider/model; custom = a name from the custom list.',
+  textName: 'Text route or model name',
+  textNameHint: 'route: provider/model such as deepseek-account/deepseek-flash. custom: the custom model name. Leave empty for session.',
+  visionMode: 'Vision model source',
+  visionModeHint: 'session = the conversation model (default); route / custom match the text model. Vision review arrives in a later version.',
+  visionName: 'Vision route or model name',
+  visionNameHint: 'route: provider/model. custom: the custom model name.',
+  imageBackend: 'Active image backend',
+  imageBackendHint: 'Defaults to agnes (Agnes AI China). Set modelscope for the fallback. The backend list lives in the plugin config file.',
+  customModels: 'Custom models (JSON array)',
+  customModelsHint: 'Each entry: {"name":"my-model","baseUrl":"https://example.com/v1","model":"gpt-4o-mini","apiKeyRef":"MY_KEY","api":"openai-chat"}. JSON and required fields are validated on save.',
+  customRef: 'Custom-model credential name',
+  customRefHint: 'Credential reference used by custom model apiKeyRef, for example MY_KEY. The field below writes to this reference.',
+  agnesKey: 'Agnes API key',
+  agnesKeyHint: 'Leave blank to keep the stored key; a value writes the DSH credential AGNES_API_KEY.',
+  modelscopeKey: 'ModelScope API key',
+  modelscopeKeyHint: 'Leave blank to keep the stored key; a value writes the DSH credential MODELSCOPE_API_KEY.',
+  customKey: 'Custom-model API key',
+  customKeyHint: 'Leave blank to keep it; a value writes the credential named above.',
+  configured: 'Configured',
+  notConfigured: 'Not configured',
+  overridden: 'Changed',
+  reset: 'Reset',
+  invalid: 'Invalid value; fix it before saving.',
+  invalidJson: 'Needs a JSON array whose entries carry name, baseUrl, model and apiKeyRef.',
+  invalidMode: 'Use session, route or custom.',
+  invalidRef: 'A credential name takes letters, digits and underscores, and cannot start with a digit.',
+  save: 'Save',
+  saving: 'Saving…',
+  saveFailed: 'The save failed; check the fields and try again.',
+  readOnly: 'Settings are read-only in this deployment.',
+  unavailable: 'This plugin is not loaded, so it cannot be configured right now.',
+}
+
+/** Field-style heading. */
+const headingStyle = { margin: '14px 0 2px', fontSize: 13, fontWeight: 600, color: 'var(--dsw-alias-label-primary)' }
+/** Muted explanatory copy. */
+const noteStyle = { margin: '0 0 6px', fontSize: 12, lineHeight: 1.5, color: 'var(--dsw-alias-label-tertiary)' }
+/** A textarea styled like the primitive inputs. */
+const areaStyle = {
+  width: '100%', boxSizing: 'border-box', minHeight: 84, padding: '8px 10px', resize: 'vertical',
+  border: '1px solid var(--dsw-alias-border-secondary)', borderRadius: 8, background: 'var(--dsw-alias-bg-primary)',
+  color: 'var(--dsw-alias-label-primary)', font: 'inherit', fontSize: 12, lineHeight: 1.5,
+}
+/** Error copy under the textarea. */
+const errorStyle = { margin: '4px 0 0', fontSize: 12, color: 'var(--dsw-alias-label-error)' }
+
+/**
+ * A field that only accepts one of a fixed set of strings.
+ * @param field - field name inside the config section.
+ * @param values - accepted values.
+ * @returns the field spec.
+ */
+function enumField(field: string, values: readonly string[]) {
+  return {
+    field,
+    format: (value: unknown) => typeof value === 'string' ? value : '',
+    parse: (text: string) => values.includes(text.trim()) ? { kind: 'set', value: text.trim() } : undefined,
+  }
+}
+
+/**
+ * The custom-model JSON field: validates the array and canonicalizes it.
+ * @returns the field spec.
+ */
+function customModelsField() {
+  return {
+    field: 'customModelsJson',
+    format: (value: unknown) => typeof value === 'string' ? value : '[]',
+    parse: (text: string) => {
+      try {
+        const parsed = JSON.parse(text.trim() === '' ? '[]' : text)
+        if (!Array.isArray(parsed)) return undefined
+        for (const entry of parsed) {
+          if (typeof entry !== 'object' || entry === null) return undefined
+          if (typeof entry.name !== 'string' || entry.name.length === 0) return undefined
+          if (typeof entry.baseUrl !== 'string' || !/^https:\/\//.test(entry.baseUrl)) return undefined
+          if (typeof entry.model !== 'string' || entry.model.length === 0) return undefined
+          if (typeof entry.apiKeyRef !== 'string' || !/^[A-Za-z_][A-Za-z0-9_]*$/.test(entry.apiKeyRef)) return undefined
+        }
+        return { kind: 'set', value: JSON.stringify(parsed, null, 2) }
+      } catch {
+        return undefined
+      }
+    },
+  }
+}
+
+/**
+ * A credential-reference field (a POSIX shell identifier).
+ * @returns the field spec.
+ */
+function credentialRefField() {
+  return {
+    field: 'customModelApiKeyRef',
+    format: (value: unknown) => typeof value === 'string' ? value : '',
+    parse: (text: string) => /^[A-Za-z_][A-Za-z0-9_]*$/.test(text.trim()) ? { kind: 'set', value: text.trim() } : undefined,
+  }
+}
+
+/**
+ * Stage and save the page's config and credentials.
+ */
+class Controller {
+  /** Shared form model over the plugin config namespace. */
+  private readonly form: any
+  /** Snapshot store the slot component reads. */
+  readonly store: any
+  /** Last credential answers, by reference. */
+  private configured: Record<string, boolean> = {}
+
+  /**
+   * @param scope - config form scope served by the Host for this plugin entry.
+   * @param ctx - browser plugin context (remote credentials).
+   */
+  constructor(private readonly scope: any, private readonly ctx: any) {
+    const secrets = [
+      { field: 'agnesKey', write: (text: string) => this.writeKey('AGNES_API_KEY', text) },
+      { field: 'modelscopeKey', write: (text: string) => this.writeKey('MODELSCOPE_API_KEY', text) },
+      { field: 'customKey', write: (text: string) => this.writeKey(this.customRef(), text) },
+    ]
+    this.form = new SettingsFormModel(scope, [
+      enumField('textModelMode', MODES), settingsTextField('textModelName'),
+      enumField('visionModelMode', MODES), settingsTextField('visionModelName'),
+      settingsTextField('imageBackend'), customModelsField(), credentialRefField(),
+    ], secrets)
+    this.store = this.form.bind(() => this.projection())
+    void this.refreshCredentials()
+  }
+
+  /** The credential reference a custom-model key writes to. */
+  private customRef(): string {
+    const staged = this.form.field('customModelApiKeyRef').text.trim()
+    return staged === '' ? DEFAULT_CUSTOM_REF : staged
+  }
+
+  /** The live credential references this page reports. */
+  private refs(): string[] {
+    return [...BASE_REFS, this.customRef()]
+  }
+
+  /** Project shell, fields and credential state for the renderer. */
+  private projection(): Record<string, unknown> {
+    const fields = Object.fromEntries(FIELDS.map(field => [field, this.form.field(field)]))
+    const secrets = Object.fromEntries(SECRETS.map(field => [field, this.form.field(field)]))
+    const configured = Object.fromEntries(this.refs().map(ref => [ref, this.configured[ref] === true]))
+    return { ...this.form.shell(), fields, secrets, configured, customRef: this.customRef() }
+  }
+
+  /** Re-read whether the Host holds each credential. */
+  private async refreshCredentials(): Promise<void> {
+    try {
+      const response = await this.ctx.remote.credentials.describe(this.refs())
+      if (!response?.ok) return
+      const next: Record<string, boolean> = {}
+      for (const ref of this.refs()) next[ref] = response.value?.[ref]?.configured === true
+      this.configured = next
+      this.store.set(this.projection())
+    } catch {
+      // A settings page must stay usable when the credential domain is unavailable.
+    }
+  }
+
+  /**
+   * Write one key, then refresh the configured badges.
+   * @param ref - credential reference.
+   * @param value - secret literal.
+   * @returns whether the Host now reports it configured.
+   */
+  private async writeKey(ref: string, value: string): Promise<boolean> {
+    await this.ctx.remote.credentials.set(ref, value)
+    await this.refreshCredentials()
+    return this.configured[ref] === true
+  }
+
+  /** Stage one field edit. */
+  edit(field: string, text: string): void { this.form.actions().edit(field, text) }
+  /** Reset one field to the composition value. */
+  resetField(field: string): void { this.form.actions().resetField(field) }
+  /** Discard every staged edit. */
+  discard(): void { this.form.actions().discard() }
+  /** Save config and staged keys, then refresh credential badges. */
+  save(): void {
+    void (async () => {
+      await this.form.save()
+      await this.refreshCredentials()
+    })()
+  }
+  /** Release the form subscriptions. */
+  dispose(): void { this.form.dispose() }
+}
+
+/**
+ * The page body: a one-line summary for the plugin row and the full form.
+ * @param props - slot view, translation, actions, primitives and the snapshot hook.
+ * @returns the summary string or the settings form.
+ */
+function SettingsPage(props: any): unknown {
+  const { translate: t, primitives: ui } = props
+  const state = props.usePptxSettings((snapshot: any) => snapshot)
+  if (props.view === 'summary') return t('summary')
+  const disabled = state.writable !== true
+  const field = (name: string, label: string, hint: string) => React.createElement(ui.SettingsValueField, {
+    id: 'pptx-' + name,
+    label,
+    hint,
+    overriddenLabel: t('overridden'),
+    resetLabel: t('reset'),
+    invalidLabel: name === 'customModelsJson' ? t('invalidJson') : name.endsWith('Mode') ? t('invalidMode') : name === 'customModelApiKeyRef' ? t('invalidRef') : t('invalid'),
+    disabled,
+    ...state.fields[name],
+    onEdit: (text: string) => { props.edit(name, text) },
+    onReset: () => { props.resetField(name) },
+  }, name)
+  const secret = (fieldName: string, label: string, hint: string, ref: string) => React.createElement(ui.SettingsSecretField, {
+    id: 'pptx-' + fieldName,
+    label,
+    hint,
+    text: state.secrets[fieldName].text,
+    configured: state.configured[ref] === true,
+    stateLabel: state.configured[ref] === true ? t('configured') : t('notConfigured'),
+    disabled,
+    onEdit: (text: string) => { props.edit(fieldName, text) },
+  }, fieldName)
+  const section = (key: string, title: string, children: unknown[]) => React.createElement('section', { key, style: { display: 'flex', flexDirection: 'column' } }, [
+    React.createElement('h4', { key: 'title', style: headingStyle }, title),
+    ...children,
+  ])
+  const textarea = React.createElement('div', { key: 'customModelsJson', style: { marginTop: 8 } }, [
+    React.createElement('label', { key: 'label', htmlFor: 'pptx-customModelsJson', style: { display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--dsw-alias-label-primary)', marginBottom: 4 } }, t('customModels')),
+    React.createElement('textarea', {
+      key: 'input',
+      id: 'pptx-customModelsJson',
+      style: areaStyle,
+      value: state.fields.customModelsJson.text,
+      disabled,
+      onChange: (event: any) => { props.edit('customModelsJson', event.target.value) },
+    }),
+    React.createElement('p', { key: 'hint', style: state.fields.customModelsJson.invalid ? errorStyle : noteStyle }, state.fields.customModelsJson.invalid ? t('invalidJson') : t('customModelsHint')),
+  ])
+  return React.createElement(ui.SettingsForm, {
+    labels: {
+      unavailable: t('unavailable'),
+      readOnly: t('readOnly'),
+      saveFailed: t('saveFailed'),
+      save: t('save'),
+      saving: t('saving'),
+    },
+    state,
+    onSave: () => { props.save() },
+    onDiscard: () => { props.discard() },
+    children: [
+      React.createElement('p', { key: 'intro', style: noteStyle }, t('intro')),
+      section('text', t('textSection'), [field('textModelMode', t('textMode'), t('textModeHint')), field('textModelName', t('textName'), t('textNameHint'))]),
+      section('vision', t('visionSection'), [field('visionModelMode', t('visionMode'), t('visionModeHint')), field('visionModelName', t('visionName'), t('visionNameHint'))]),
+      section('image', t('imageSection'), [field('imageBackend', t('imageBackend'), t('imageBackendHint'))]),
+      section('custom', t('customSection'), [textarea, field('customModelApiKeyRef', t('customRef'), t('customRefHint'))]),
+      section('keys', t('credentialSection'), [
+        secret('agnesKey', t('agnesKey'), t('agnesKeyHint'), 'AGNES_API_KEY'),
+        secret('modelscopeKey', t('modelscopeKey'), t('modelscopeKeyHint'), 'MODELSCOPE_API_KEY'),
+        secret('customKey', t('customKey'), t('customKeyHint'), state.customRef),
+      ]),
+    ],
+  })
+}
+
+/**
+ * Mount the settings page into the plugin's config slot.
+ * @param ctx - browser plugin context.
+ */
+export function apply(ctx: any): void {
+  const primitives = { SettingsForm, SettingsFormModel, SettingsSecretField, SettingsValueField, settingsTextField }
+  ctx.effect(() => ctx.locale.register(NS, { zh, en }), 'pptx-studio: dictionaries')
+  const translate = ctx.locale.bind(NS)
+  const controller = new Controller(ctx.configForms.get(ENTRY_ID), ctx)
+  const Page = (props: any) => React.createElement(SettingsPage, {
+    ...props,
+    edit: (field: string, text: string) => controller.edit(field, text),
+    resetField: (field: string) => controller.resetField(field),
+    discard: () => controller.discard(),
+    save: () => controller.save(),
+    translate,
+    primitives,
+  })
+  ctx.effect(() => () => { controller.dispose() }, 'pptx-studio: form disposal')
+  ctx.effect(() => ctx.configForms.whileServed([ENTRY_ID], () => ctx.slots.inject('plugins.bundle.config', function* () {
+    for (const key of BUNDLE_NAMES) {
+      yield ctx.slots.register({
+        name: 'plugins.bundle.config',
+        key,
+        locale: NS,
+        inject: () => ({ hooks: { pptxSettings: controller.store } }),
+      }, Page)
+    }
+  })), 'pptx-studio: settings page')
+}

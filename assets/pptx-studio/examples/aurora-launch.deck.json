@@ -1,0 +1,1240 @@
+{
+  "version": 1,
+  "id": "aurora-launch-2026",
+  "title": "Aurora 2.0 产品发布会",
+  "language": "zh-CN",
+  "design": {
+    "style": "tech-dark",
+    "complexity": "rich",
+    "textDensity": "light"
+  },
+  "theme": {
+    "style": "tech-dark",
+    "colors": {
+      "background": "#0B1020",
+      "surface": "#141B33",
+      "primary": "#3B82F6",
+      "secondary": "#22D3EE",
+      "accent": "#A78BFA",
+      "text": "#F1F5F9",
+      "textMuted": "#94A3B8"
+    },
+    "fonts": {
+      "heading": "微软雅黑",
+      "body": "微软雅黑",
+      "latin": "Segoe UI"
+    },
+    "styleAnchor": "futuristic technology aesthetic, deep navy-black background, glowing cyan and electric-blue light lines, subtle perspective grid, soft bokeh light particles, clean high-end product-launch look, cinematic lighting, smooth gradients, ultra clean, high detail",
+    "motifs": {
+      "foreground": "crystalline shards and glowing filaments",
+      "midground": "faint holographic woven texture",
+      "background": "tiny glowing data dots and micro circuit nodes"
+    },
+    "seed": 20261017,
+    "radius": 12
+  },
+  "assets": [
+    {
+      "id": "bg-cover",
+      "kind": "background",
+      "aspect": "16:9",
+      "prompt": "an abstract glowing neural core made of light filaments and floating data particles, the main visual sits on the right side of the frame, the left half of the frame is a calm gradient with soft texture"
+    },
+    {
+      "id": "bg-section",
+      "kind": "background",
+      "aspect": "16:9",
+      "prompt": "flowing streams of light converging toward a distant horizon, soft glow along the right edge and the bottom edge, the left two thirds of the frame stay calm and even"
+    },
+    {
+      "id": "bg-content",
+      "kind": "background",
+      "aspect": "16:9",
+      "prompt": "a very subtle dark surface texture with faint light lines and soft bokeh, gentle light falloff toward the edges, a large calm even center, low contrast"
+    },
+    {
+      "id": "il-chip",
+      "kind": "illustration",
+      "aspect": "3:4",
+      "prompt": "isolated illustration of a glowing translucent processor chip with luminous circuit traces",
+      "cutout": "black"
+    }
+  ],
+  "decorations": [
+    {
+      "id": "glow-corners",
+      "backdrop": "black",
+      "pieces": [
+        {
+          "id": "corner-bracket-a",
+          "subject": "corner bracket of thin glowing circuit traces",
+          "role": "corner"
+        },
+        {
+          "id": "corner-bracket-b",
+          "subject": "corner bracket of layered luminous arcs",
+          "role": "corner"
+        },
+        {
+          "id": "corner-shard",
+          "subject": "corner cluster of small crystal shards",
+          "role": "corner"
+        },
+        {
+          "id": "edge-strip",
+          "subject": "narrow edge strip of parallel light filaments",
+          "role": "border"
+        },
+        {
+          "id": "ring-fragment",
+          "subject": "half ring fragment with a glowing rim",
+          "role": "frame"
+        },
+        {
+          "id": "spark-cluster",
+          "subject": "small cluster of glowing data sparks",
+          "role": "scatter"
+        },
+        {
+          "id": "dot-grid",
+          "subject": "cluster of tiny luminous dots",
+          "role": "scatter"
+        },
+        {
+          "id": "circuit-node",
+          "subject": "small circuit node with radiating lines",
+          "role": "accent"
+        }
+      ],
+      "mode": "sheet"
+    },
+    {
+      "id": "glow-accent",
+      "backdrop": "black",
+      "pieces": [
+        {
+          "id": "hex-badge",
+          "subject": "hexagonal badge base with a thin glowing outline",
+          "role": "badge"
+        },
+        {
+          "id": "diamond-badge",
+          "subject": "diamond badge base with a luminous edge",
+          "role": "badge"
+        },
+        {
+          "id": "divider-line",
+          "subject": "short divider of paired light lines with a central diamond",
+          "role": "divider"
+        },
+        {
+          "id": "dot-divider",
+          "subject": "vertical divider of spaced glowing dots",
+          "role": "divider"
+        },
+        {
+          "id": "chevron",
+          "subject": "small glowing chevron pointing right",
+          "role": "accent"
+        },
+        {
+          "id": "sparkle",
+          "subject": "small four-point sparkle",
+          "role": "accent"
+        }
+      ],
+      "mode": "sheet"
+    }
+  ],
+  "slides": [
+    {
+      "id": "s01",
+      "layout": "cover",
+      "visual": "左侧大标题与副标题，右侧为发光的 AI 核心主视觉；四角是镜像的光弧角框，左下角叠一组晶体碎片，标题下方一处火花散点",
+      "background": {
+        "asset": "bg-cover"
+      },
+      "elements": [
+        {
+          "type": "decor",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "w": 10,
+            "h": 10
+          },
+          "piece": "glow-corners/corner-bracket-a"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 90,
+            "y": 0,
+            "w": 10,
+            "h": 10
+          },
+          "piece": "glow-corners/corner-bracket-a",
+          "flipH": true
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 0,
+            "y": 90,
+            "w": 10,
+            "h": 10
+          },
+          "piece": "glow-corners/corner-bracket-b"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 48,
+            "y": 86,
+            "w": 8,
+            "h": 6
+          },
+          "piece": "glow-corners/spark-cluster"
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 6,
+            "y": 34,
+            "w": 54,
+            "h": 18
+          },
+          "role": "display",
+          "text": "Aurora 2.0",
+          "bold": true
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 6,
+            "y": 54,
+            "w": 54,
+            "h": 8
+          },
+          "role": "subtitle",
+          "text": [
+            {
+              "text": "更快、更懂你的 "
+            },
+            {
+              "text": "AI 助手",
+              "color": "secondary",
+              "bold": true
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 6,
+            "y": 80,
+            "w": 40,
+            "h": 5
+          },
+          "role": "caption",
+          "text": "2026 年 10 月 · 杭州",
+          "color": "textMuted"
+        }
+      ],
+      "notes": "开场：欢迎各位来到 Aurora 2.0 发布会。今天我们会用三个数字讲清楚这一代产品的变化，然后演示三项核心功能，最后公布上线计划。"
+    },
+    {
+      "id": "s02",
+      "layout": "section",
+      "visual": "左侧大号章节编号与标题，右侧和底部为汇聚的光流；四角是晶簇角框，底边一条光丝边带，右侧散落光点",
+      "background": {
+        "asset": "bg-section"
+      },
+      "elements": [
+        {
+          "type": "decor",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "w": 8,
+            "h": 8
+          },
+          "piece": "glow-corners/corner-shard"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 0,
+            "y": 92,
+            "w": 8,
+            "h": 8
+          },
+          "piece": "glow-corners/corner-shard",
+          "flipV": true
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 20,
+            "y": 94,
+            "w": 60,
+            "h": 6
+          },
+          "piece": "glow-corners/edge-strip"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 70,
+            "y": 28,
+            "w": 6,
+            "h": 6
+          },
+          "piece": "glow-corners/dot-grid"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 80,
+            "y": 40,
+            "w": 14,
+            "h": 14
+          },
+          "piece": "glow-corners/ring-fragment"
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 6,
+            "y": 30,
+            "w": 20,
+            "h": 16
+          },
+          "role": "number",
+          "text": "01",
+          "color": "secondary",
+          "bold": true
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 6,
+            "y": 48,
+            "w": 60,
+            "h": 12
+          },
+          "role": "title",
+          "text": "性能跃迁",
+          "bold": true
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 6,
+            "y": 62,
+            "w": 60,
+            "h": 8
+          },
+          "role": "subtitle",
+          "text": "这一代变快了多少",
+          "color": "text"
+        }
+      ]
+    },
+    {
+      "id": "s03",
+      "layout": "big-number",
+      "visual": "左侧超大数字 3 倍作为视觉焦点，右侧两条补充说明；上下角是光弧角框，左下晶簇，说明下方一处火花散点",
+      "background": {
+        "asset": "bg-content"
+      },
+      "elements": [
+        {
+          "type": "decor",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "w": 8,
+            "h": 8
+          },
+          "piece": "glow-corners/corner-bracket-a"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 92,
+            "y": 0,
+            "w": 8,
+            "h": 8
+          },
+          "piece": "glow-corners/corner-bracket-a",
+          "flipH": true
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 8,
+            "y": 8,
+            "w": 86,
+            "h": 12
+          },
+          "role": "title",
+          "text": "推理速度提升到上一代的 3 倍",
+          "bold": true
+        },
+        {
+          "type": "shape",
+          "box": {
+            "x": 6,
+            "y": 9,
+            "w": 0.6,
+            "h": 10
+          },
+          "shape": "rect",
+          "fill": "primary",
+          "decor": true
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 6,
+            "y": 30,
+            "w": 44,
+            "h": 26
+          },
+          "role": "number",
+          "text": "3×",
+          "color": "accent",
+          "bold": true
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 6,
+            "y": 58,
+            "w": 44,
+            "h": 8
+          },
+          "role": "caption",
+          "text": "首 token 延迟，同等硬件",
+          "color": "textMuted"
+        },
+        {
+          "type": "bullets",
+          "box": {
+            "x": 54,
+            "y": 30,
+            "w": 40,
+            "h": 50
+          },
+          "role": "body",
+          "items": [
+            "延迟 360→120 ms",
+            "单机并发翻 2 倍"
+          ]
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 0,
+            "y": 90,
+            "w": 8,
+            "h": 10
+          },
+          "piece": "glow-corners/corner-bracket-b"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 58,
+            "y": 84,
+            "w": 8,
+            "h": 6
+          },
+          "piece": "glow-corners/spark-cluster"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 58,
+            "y": 82,
+            "w": 6,
+            "h": 6
+          },
+          "piece": "glow-corners/circuit-node"
+        }
+      ],
+      "notes": "讲稿：这一代最直观的变化是快。同样的硬件，首 token 延迟从 360 毫秒降到 120 毫秒，也就是 3 倍。这意味着同一台服务器可以多承载两倍的并发用户。"
+    },
+    {
+      "id": "s04",
+      "layout": "cards",
+      "visual": "三张半透明玻璃卡片横向排列，每张卡片顶部一个带底色圆的图标；顶部两角是晶簇角框，左下角框，标题与卡片之间一排光点",
+      "background": {
+        "asset": "bg-content"
+      },
+      "elements": [
+        {
+          "type": "decor",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "w": 8,
+            "h": 8
+          },
+          "piece": "glow-corners/corner-shard"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 92,
+            "y": 0,
+            "w": 8,
+            "h": 8
+          },
+          "piece": "glow-corners/corner-shard",
+          "flipH": true
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 0,
+            "y": 86,
+            "w": 10,
+            "h": 8
+          },
+          "piece": "glow-corners/corner-bracket-b"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 46,
+            "y": 21,
+            "w": 8,
+            "h": 5
+          },
+          "piece": "glow-corners/dot-grid"
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 6,
+            "y": 8,
+            "w": 88,
+            "h": 12
+          },
+          "role": "title",
+          "text": "三项核心功能",
+          "bold": true
+        },
+        {
+          "type": "shape",
+          "box": {
+            "x": 6,
+            "y": 28,
+            "w": 27.3,
+            "h": 58
+          },
+          "shape": "roundRect",
+          "fill": "surface",
+          "opacity": 0.7,
+          "line": {
+            "color": "primary",
+            "width": 0.75
+          },
+          "decor": true
+        },
+        {
+          "type": "icon",
+          "box": {
+            "x": 8.5,
+            "y": 32,
+            "w": 6,
+            "h": 10.7
+          },
+          "name": "brain",
+          "color": "secondary",
+          "badge": "background"
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 8.5,
+            "y": 48,
+            "w": 22.3,
+            "h": 8
+          },
+          "role": "heading",
+          "text": "长期记忆",
+          "bold": true
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 8.5,
+            "y": 58,
+            "w": 22.3,
+            "h": 20
+          },
+          "role": "body",
+          "text": "记住你的偏好",
+          "color": "textMuted"
+        },
+        {
+          "type": "shape",
+          "box": {
+            "x": 36.35,
+            "y": 28,
+            "w": 27.3,
+            "h": 58
+          },
+          "shape": "roundRect",
+          "fill": "surface",
+          "opacity": 0.7,
+          "line": {
+            "color": "primary",
+            "width": 0.75
+          },
+          "decor": true
+        },
+        {
+          "type": "icon",
+          "box": {
+            "x": 38.85,
+            "y": 32,
+            "w": 6,
+            "h": 10.7
+          },
+          "name": "zap",
+          "color": "secondary",
+          "badge": "background"
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 38.85,
+            "y": 48,
+            "w": 22.3,
+            "h": 8
+          },
+          "role": "heading",
+          "text": "实时联网",
+          "bold": true
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 38.85,
+            "y": 58,
+            "w": 22.3,
+            "h": 20
+          },
+          "role": "body",
+          "text": "答案带来源",
+          "color": "textMuted"
+        },
+        {
+          "type": "shape",
+          "box": {
+            "x": 66.7,
+            "y": 28,
+            "w": 27.3,
+            "h": 58
+          },
+          "shape": "roundRect",
+          "fill": "surface",
+          "opacity": 0.7,
+          "line": {
+            "color": "primary",
+            "width": 0.75
+          },
+          "decor": true
+        },
+        {
+          "type": "icon",
+          "box": {
+            "x": 69.2,
+            "y": 32,
+            "w": 6,
+            "h": 10.7
+          },
+          "name": "shield",
+          "color": "secondary",
+          "badge": "background"
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 69.2,
+            "y": 48,
+            "w": 22.3,
+            "h": 8
+          },
+          "role": "heading",
+          "text": "本地隐私",
+          "bold": true
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 69.2,
+            "y": 58,
+            "w": 22.3,
+            "h": 20
+          },
+          "role": "body",
+          "text": "数据不出设备",
+          "color": "textMuted"
+        }
+      ],
+      "notes": "三项功能分别解决记不住、信息旧、不放心三个问题。"
+    },
+    {
+      "id": "s05",
+      "layout": "bullets-image",
+      "visual": "左侧三条要点，右侧一张去底的发光芯片插画直接融入背景（约 40% 页宽），没有白框；顶部两角角框，左下角晶体碎片",
+      "background": {
+        "asset": "bg-content"
+      },
+      "elements": [
+        {
+          "type": "decor",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "w": 8,
+            "h": 8
+          },
+          "piece": "glow-corners/corner-bracket-a"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 92,
+            "y": 0,
+            "w": 8,
+            "h": 8
+          },
+          "piece": "glow-corners/corner-bracket-a",
+          "flipH": true
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 0,
+            "y": 90,
+            "w": 8,
+            "h": 10
+          },
+          "piece": "glow-corners/corner-shard"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 20,
+            "y": 94,
+            "w": 60,
+            "h": 6
+          },
+          "piece": "glow-corners/edge-strip"
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 6,
+            "y": 8,
+            "w": 88,
+            "h": 12
+          },
+          "role": "title",
+          "text": "自研推理芯片，让成本降一半",
+          "bold": true
+        },
+        {
+          "type": "bullets",
+          "box": {
+            "x": 6,
+            "y": 26,
+            "w": 46,
+            "h": 62
+          },
+          "role": "body",
+          "items": [
+            "单位算力成本下降 50%",
+            "功耗下降 35%",
+            "2027 年全面替换"
+          ]
+        },
+        {
+          "type": "image",
+          "box": {
+            "x": 54,
+            "y": 20,
+            "w": 40,
+            "h": 72
+          },
+          "asset": "il-chip",
+          "fit": "contain"
+        }
+      ]
+    },
+    {
+      "id": "s06",
+      "layout": "chart",
+      "visual": "左侧原生柱状图展示三年用户增长，右侧两条结论；四角光弧角框，底边一条光丝边带",
+      "background": {
+        "asset": "bg-content"
+      },
+      "elements": [
+        {
+          "type": "decor",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "w": 8,
+            "h": 8
+          },
+          "piece": "glow-corners/corner-bracket-a"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 92,
+            "y": 0,
+            "w": 8,
+            "h": 8
+          },
+          "piece": "glow-corners/corner-bracket-a",
+          "flipH": true
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 0,
+            "y": 90,
+            "w": 8,
+            "h": 10
+          },
+          "piece": "glow-corners/corner-bracket-b"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 30,
+            "y": 94,
+            "w": 40,
+            "h": 6
+          },
+          "piece": "glow-corners/edge-strip"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 66,
+            "y": 88,
+            "w": 6,
+            "h": 4
+          },
+          "piece": "glow-accent/sparkle"
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 6,
+            "y": 8,
+            "w": 88,
+            "h": 12
+          },
+          "role": "title",
+          "text": "用户三年增长 4 倍",
+          "bold": true
+        },
+        {
+          "type": "chart",
+          "box": {
+            "x": 6,
+            "y": 24,
+            "w": 58,
+            "h": 66
+          },
+          "chart": "bar",
+          "categories": [
+            "2024",
+            "2025",
+            "2026"
+          ],
+          "series": [
+            {
+              "name": "月活用户（百万）",
+              "values": [
+                5,
+                11,
+                20
+              ]
+            }
+          ],
+          "legend": false,
+          "dataLabels": true
+        },
+        {
+          "type": "bullets",
+          "box": {
+            "x": 68,
+            "y": 28,
+            "w": 26,
+            "h": 58
+          },
+          "role": "body",
+          "items": [
+            "年均增长 100%",
+            "企业用户占 40%"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "s07",
+      "layout": "timeline",
+      "visual": "横向发光主线贯穿页面中部，三个节点，上方为时间，下方为里程碑说明；底部一条结论带总结倒排节奏",
+      "background": {
+        "asset": "bg-content"
+      },
+      "elements": [
+        {
+          "type": "decor",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "w": 8,
+            "h": 8
+          },
+          "piece": "glow-corners/corner-bracket-a"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 92,
+            "y": 0,
+            "w": 8,
+            "h": 8
+          },
+          "piece": "glow-corners/corner-bracket-a",
+          "flipH": true
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 0,
+            "y": 90,
+            "w": 8,
+            "h": 10
+          },
+          "piece": "glow-corners/corner-bracket-b"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 20,
+            "y": 94,
+            "w": 60,
+            "h": 6
+          },
+          "piece": "glow-corners/edge-strip"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 44,
+            "y": 94,
+            "w": 12,
+            "h": 5
+          },
+          "piece": "glow-accent/divider-line"
+        },
+        {
+          "type": "panel",
+          "id": "conclusion-band",
+          "box": {
+            "x": 8,
+            "y": 65,
+            "w": 84,
+            "h": 28
+          },
+          "panel": "panel",
+          "fill": "surface",
+          "opacity": 0.55,
+          "corners": false
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 6,
+            "y": 8,
+            "w": 88,
+            "h": 12
+          },
+          "role": "title",
+          "text": "上线时间表",
+          "bold": true
+        },
+        {
+          "type": "shape",
+          "box": {
+            "x": 8,
+            "y": 52,
+            "w": 84,
+            "h": 0.01
+          },
+          "shape": "line",
+          "line": {
+            "color": "secondary",
+            "width": 2
+          },
+          "decor": true
+        },
+        {
+          "type": "shape",
+          "box": {
+            "x": 17,
+            "y": 50.2,
+            "w": 2,
+            "h": 3.6
+          },
+          "shape": "ellipse",
+          "fill": "accent",
+          "decor": true
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 8,
+            "y": 38,
+            "w": 20,
+            "h": 8
+          },
+          "role": "heading",
+          "text": "11 月",
+          "align": "center",
+          "bold": true
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 8,
+            "y": 58,
+            "w": 20,
+            "h": 10
+          },
+          "role": "body",
+          "text": "公测开启",
+          "align": "center",
+          "color": "textMuted"
+        },
+        {
+          "type": "shape",
+          "box": {
+            "x": 49,
+            "y": 50.2,
+            "w": 2,
+            "h": 3.6
+          },
+          "shape": "ellipse",
+          "fill": "accent",
+          "decor": true
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 40,
+            "y": 38,
+            "w": 20,
+            "h": 8
+          },
+          "role": "heading",
+          "text": "12 月",
+          "align": "center",
+          "bold": true
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 40,
+            "y": 58,
+            "w": 20,
+            "h": 10
+          },
+          "role": "body",
+          "text": "企业版上线",
+          "align": "center",
+          "color": "textMuted"
+        },
+        {
+          "type": "shape",
+          "box": {
+            "x": 81,
+            "y": 50.2,
+            "w": 2,
+            "h": 3.6
+          },
+          "shape": "ellipse",
+          "fill": "accent",
+          "decor": true
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 72,
+            "y": 38,
+            "w": 20,
+            "h": 8
+          },
+          "role": "heading",
+          "text": "2027 Q1",
+          "align": "center",
+          "bold": true
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 72,
+            "y": 58,
+            "w": 20,
+            "h": 10
+          },
+          "role": "body",
+          "text": "全球发布",
+          "align": "center",
+          "color": "textMuted"
+        },
+        {
+          "type": "text",
+          "id": "conclusion-heading",
+          "box": {
+            "x": 11,
+            "y": 68,
+            "w": 56,
+            "h": 8
+          },
+          "role": "heading",
+          "text": "以 2027 为终点倒排",
+          "bold": true
+        },
+        {
+          "type": "text",
+          "id": "conclusion-body",
+          "box": {
+            "x": 11,
+            "y": 77,
+            "w": 56,
+            "h": 9
+          },
+          "role": "body",
+          "text": "每个节点都有可验收的交付物",
+          "color": "textMuted"
+        },
+        {
+          "type": "text",
+          "id": "conclusion-count",
+          "box": {
+            "x": 70,
+            "y": 69,
+            "w": 20,
+            "h": 7
+          },
+          "role": "heading",
+          "text": "3 个节点",
+          "color": "secondary",
+          "bold": true
+        },
+        {
+          "type": "text",
+          "id": "conclusion-note",
+          "box": {
+            "x": 70,
+            "y": 78,
+            "w": 20,
+            "h": 8
+          },
+          "role": "caption",
+          "text": "倒排到发布日",
+          "color": "textMuted"
+        }
+      ]
+    },
+    {
+      "id": "s08",
+      "layout": "closing",
+      "visual": "与封面呼应的构图，左侧大字感谢语与行动号召，右侧为 AI 核心主视觉；四角镜像角框，标题下方一处火花散点",
+      "background": {
+        "asset": "bg-cover"
+      },
+      "elements": [
+        {
+          "type": "decor",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "w": 10,
+            "h": 10
+          },
+          "piece": "glow-corners/corner-bracket-a"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 90,
+            "y": 0,
+            "w": 10,
+            "h": 10
+          },
+          "piece": "glow-corners/corner-bracket-a",
+          "flipH": true
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 0,
+            "y": 90,
+            "w": 10,
+            "h": 10
+          },
+          "piece": "glow-corners/corner-bracket-b"
+        },
+        {
+          "type": "decor",
+          "box": {
+            "x": 48,
+            "y": 86,
+            "w": 8,
+            "h": 6
+          },
+          "piece": "glow-corners/spark-cluster"
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 6,
+            "y": 36,
+            "w": 60,
+            "h": 16
+          },
+          "role": "display",
+          "text": "谢谢",
+          "bold": true
+        },
+        {
+          "type": "text",
+          "box": {
+            "x": 6,
+            "y": 56,
+            "w": 60,
+            "h": 8
+          },
+          "role": "subtitle",
+          "text": "扫码预约公测 · aurora.example.com",
+          "color": "textMuted"
+        }
+      ]
+    }
+  ]
+}

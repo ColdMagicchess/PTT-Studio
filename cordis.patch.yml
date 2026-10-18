@@ -1,0 +1,6 @@
+# dsh-pptx-studio bundle layer: one Host row that registers the pptx-studio
+# skill and the PPT tools. Override this row's config in the profile
+# cordis.patch.yml to change limits or the image backend.
+- insert:
+    - id: pptx-studio
+      name: dsh-pptx-studio

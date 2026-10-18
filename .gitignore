@@ -1,0 +1,30 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# build output
+lib/
+dist/
+*.tgz
+
+# local DSH host copies and samples
+.host/
+.samples/
+
+# generated decks and previews (docs/preview holds the tracked README images)
+*.pptx
+*-预览.png
+
+# secrets
+.env
+.env.*
+!.env.example
+
+# logs and OS files
+*.log
+.DS_Store
+Thumbs.db
+
+# local handoff notes and one-off probes
+STATUS.md
+scripts/probe-*.ts

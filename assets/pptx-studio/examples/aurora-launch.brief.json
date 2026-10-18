@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "topic": "Aurora 2.0 产品发布会",
+  "purpose": "发布会",
+  "audience": "客户与媒体",
+  "language": "zh-CN",
+  "slideCount": 8,
+  "style": "tech-dark",
+  "complexity": "rich",
+  "textDensity": "light",
+  "mustInclude": [
+    "三项核心功能",
+    "上线时间表"
+  ],
+  "decidedBy": {
+    "style": "user",
+    "complexity": "user",
+    "textDensity": "assistant"
+  }
+}

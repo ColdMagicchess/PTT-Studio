@@ -1,0 +1,38 @@
+/**
+ * dsh-pptx-studio: design-first PowerPoint generation for DeepSeek Harness.
+ *
+ * Registers the pptx-studio skill and four tools:
+ * pptx_style_board, pptx_generate_assets, pptx_build, pptx_check, pptx_render.
+ */
+import type { Context } from '@deepseek-ai/cordis'
+import { Config, readLive } from './config.ts'
+import { fontMeasurer } from './build/metrics.ts'
+import { readSkillDescription, registerSkill } from './skill.ts'
+import { registerBuildTools } from './tools/build.ts'
+import { registerImageTools } from './tools/images.ts'
+import { registerRenderTool } from './tools/render.ts'
+
+export { Config }
+
+/** Cordis plugin name. */
+export const name = 'pptx-studio'
+/** Required host services. credentials and sandboxPolicy are read with ctx.get when present. */
+export const inject = ['tools', 'skills', 'workingDirectory']
+
+/**
+ * Activate the plugin.
+ * @param ctx - plugin context.
+ * @param config - validated configuration.
+ */
+export async function apply(ctx: Context, config: Config): Promise<void> {
+  const imageBackend = readLive(config.imageBackend)
+  if (imageBackend !== '' && !config.imageBackends.some(b => b.name === imageBackend)) {
+    throw new Error(`pptx-studio: imageBackend "${imageBackend}" is not in imageBackends`)
+  }
+  const description = await readSkillDescription()
+  registerSkill(ctx, description)
+  const measurer = fontMeasurer(config.measureFont, config.measureFontBold)
+  registerBuildTools(ctx, config, measurer)
+  registerImageTools(ctx, config)
+  registerRenderTool(ctx, config)
+}
