@@ -124,11 +124,11 @@ pnpm run pack
 
 然后在 Desktop 中二选一：
 
-1. 打开「插件」页 → 安装第三方插件 → 选择 `dist/dsh-pptx-studio-0.3.0.tgz`；
+1. 打开「插件」页 → 安装第三方插件 → 选择 `dist/dsh-pptx-studio-0.3.1.tgz`；
 2. 或退出 Desktop 后，用自带 CLI 安装：
 
 ```powershell
-"E:\Deepseek harness Desktop\resources\runtime\cli\bin\dsh.cmd" plugin --profile desktop add "E:\path\to\dist\dsh-pptx-studio-0.3.0.tgz"
+"E:\Deepseek harness Desktop\resources\runtime\cli\bin\dsh.cmd" plugin --profile desktop add "E:\path\to\dist\dsh-pptx-studio-0.3.1.tgz"
 ```
 
 重启 Desktop，插件页出现 **PPT 工作室** 即安装成功。
@@ -153,7 +153,7 @@ Key 只写入 DSH 凭据库，不进入配置文件。也可以直接设置同�
 
 > 做一份「旧办公楼更新提案」，现代极简、商务建筑风，7 页左右。
 
-模型会自动加载 `pptx-studio` skill，按顺序完成需求确认、设计稿、风格板、配图、组装和检查。你也可以在过程中直接指定：
+模型会自动加载 `pptx-studio` skill，按顺序完成需求确认、设计稿、风格板、配图、组装和检查。如果插件设置里配置了独立视觉模型（`visionModelMode` 为 `route` 或 `custom`），检查阶段会调用 `pptx_review` 逐页评审并返回结构化问题；默认 `session` 时仍用渲染图 + `read_image` 复查。你也可以在过程中直接指定：
 
 - 「用瑞士国际主义风格，黑白摄影 + 信号红」
 - 「这块内容太空了，补满一点」
