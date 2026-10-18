@@ -72,6 +72,18 @@
       },
       "versions": [
         {
+          "version": "0.4.1",
+          "publishTimestamp": 1792321476,
+          "source": {
+            "type": "git",
+            "url": "https://github.com/ColdMagicchess/PTT-Studio",
+            "commit": "31c900ead0aebb9b10593e8952b8e4903a9ceb7f"
+          },
+          "engines": {
+            "dsh": ">=0.2.1-rc.2 <0.3.0"
+          }
+        },
+        {
           "version": "0.4.0",
           "publishTimestamp": 1792306255,
           "source": {
