@@ -1,7 +1,7 @@
 {
   "name": "dsh-pptx-studio",
   "version": "0.2.2",
-  "description": "Design-first PowerPoint generation for DeepSeek Harness: guided intake, consistent AI imagery, and editable slides",
+  "description": "Design-first PowerPoint generation for DeepSeek Harness: guided intake, AI imagery, editable slides, and built-in layout checks",
   "keywords": [
     "deepseek-harness",
     "dsh",
@@ -17,6 +17,7 @@
   "exports": {
     ".": "./lib/index.js",
     "./client": "./lib/client.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
     "./package.json": "./package.json",
     "./locale/*.json": "./locale/*.json"
   },
@@ -27,7 +28,8 @@
     "cordis.patch.yml",
     "locale/*.json",
     "icon.svg",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "engines": {
     "dsh": ">=0.2.1-rc.2 <0.3.0",
@@ -36,7 +38,9 @@
   "scripts": {
     "build": "tsdown && tsdown -c tsdown.client.config.ts",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "pack": "pnpm run build && pnpm pack --pack-destination dist"
+    "test": "vitest run",
+    "pack": "pnpm run build && pnpm pack --pack-destination dist",
+    "prepublishOnly": "pnpm run build"
   },
   "peerDependencies": {
     "@deepseek-ai/cordis": "~4.0.5"
@@ -71,5 +75,14 @@
       ],
       "platform": "web"
     }
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ColdMagicchess/PTT-Studio.git"
+  },
+  "homepage": "https://github.com/ColdMagicchess/PTT-Studio#readme",
+  "bugs": {
+    "url": "https://github.com/ColdMagicchess/PTT-Studio/issues"
+  },
+  "packageManager": "pnpm@11.28.5"
 }

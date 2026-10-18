@@ -97,14 +97,28 @@
 - Node.js **≥ 22.19**（仅从源码构建时需要）；
 - 图片生成需要 Agnes 或 ModelScope 的 API Key。
 
-### 从 tgz 安装到 Desktop
+### 直接从 GitHub 安装（推荐）
+
+本仓库按 DSH **组合包（bundle）分发格式**组织，并且已经把构建产物提交在 `lib/` 下，因此不需要在安装时构建：
+
+```bash
+dsh plugin --profile desktop add github:ColdMagicchess/PTT-Studio
+```
+
+安装后重启 Desktop，在「插件」页看到 **PPT 工作室** 即成功。生产环境建议锁定 commit：
+
+```bash
+dsh plugin --profile desktop add github:ColdMagicchess/PTT-Studio#<commit>
+```
+
+### 从源码构建 tgz
 
 ```bash
 git clone https://github.com/ColdMagicchess/PTT-Studio.git
 cd PTT-Studio
 pnpm install
 pnpm run build
-pnpm pack --pack-destination dist
+pnpm run pack
 ```
 
 然后在 Desktop 中二选一：
@@ -117,6 +131,8 @@ pnpm pack --pack-destination dist
 ```
 
 重启 Desktop，插件页出现 **PPT 工作室** 即安装成功。
+
+> 如果修改了源码，重新执行 `pnpm run build` 后把 `lib/index.js`、`lib/client.js` 一起提交；DSH 从 GitHub 安装的是仓库内容，不会替你运行构建脚本。
 
 ### 配置 API Key
 
@@ -169,6 +185,24 @@ Key 只写入 DSH 凭据库，不进入配置文件。也可以直接设置同�
 | `customModelApiKeyRef` | `CUSTOM_API_KEY` | 自定义模型 Key 的凭据名 |
 | `imageMaxPx` | `800` | 嵌入图片的最长边（控制包体大小） |
 | `maxImagesPerCall` | `24` | 单次生成图片上限 |
+
+## 插件仓库格式
+
+本仓库遵循 DSH 第三方组合包的标准分发布局（单插件仓库）：
+
+```text
+package.json          name / version / main / exports / files / engines.dsh
+                      dsh.bundle.patch → cordis.patch.yml
+                      dsh.client       → lib/client.js（Web 设置页）
+cordis.patch.yml      bundle 层：插入一个 id 为 pptx-studio 的 Host 行
+lib/index.js          Host 入口（已提交，安装即用）
+lib/client.js         Web 设置页（已提交）
+locale/               插件页标题与描述
+assets/pptx-studio/   skill、风格/版式/生图/质检规范
+src/                  TypeScript 源码（开发用）
+```
+
+`package.json` 的 `files` 精确包含发布需要的文件；`lib/` 是构建产物但**必须入库**，因为 `dsh plugin add github:...` 只拉源码、不运行 `prepare`/构建脚本。
 
 ## 项目结构
 

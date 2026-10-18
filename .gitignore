@@ -3,7 +3,6 @@ node_modules/
 .pnpm-store/
 
 # build output
-lib/
 dist/
 *.tgz
 
@@ -22,6 +21,8 @@ dist/
 
 # logs and OS files
 *.log
+*.tsbuildinfo
+coverage/
 .DS_Store
 Thumbs.db
 
