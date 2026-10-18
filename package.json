@@ -1,6 +1,6 @@
 {
   "name": "dsh-pptx-studio",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "Design-first PowerPoint generation for DeepSeek Harness: guided intake, AI imagery, editable slides, and built-in layout checks",
   "keywords": [
     "deepseek-harness",
@@ -40,7 +40,8 @@
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "vitest run",
     "pack": "pnpm run build && pnpm pack --pack-destination dist",
-    "prepublishOnly": "pnpm run build"
+    "prepublishOnly": "pnpm run build",
+    "market": "tsx scripts/market-index.ts"
   },
   "peerDependencies": {
     "@deepseek-ai/cordis": "~4.0.5"
@@ -71,7 +72,9 @@
         "@deepseek-ai/dsh-client-locale",
         "@deepseek-ai/dsh-client-ui-settings",
         "@deepseek-ai/dsh-client-ui-plugin-manager",
-        "@deepseek-ai/dsh-api-remotes"
+        "@deepseek-ai/dsh-client-ui-tool",
+        "@deepseek-ai/dsh-api-remotes",
+        "@deepseek-ai/dsh-api-workspace-files"
       ],
       "platform": "web"
     }

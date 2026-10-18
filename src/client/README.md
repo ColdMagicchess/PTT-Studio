@@ -4,7 +4,10 @@
 
 | 文件 | 作用 |
 |---|---|
-| `index.ts` | 设置页：文字/视觉/图片模型选择、自定义模型 JSON、Agnes/ModelScope/自定义模型 Key 输入 |
+| `index.ts` | 入口：挂载工具卡片与设置页；设置页包含文字/视觉/图片模型选择、自定义模型 JSON、Agnes/ModelScope/自定义模型 Key 输入 |
+| `cards.ts` | 6 个 `pptx_*` 工具的聊天卡片（`tool.call.toolview` keyed slot）：组装卡显示总览图、页数、体积、问题；评审卡逐页结论；配图/样张/渲染卡显示缩略图网格；点击放大（`ImageLightbox`）；图片经 `remote.workspaceFiles.readBytes` 按 Session 授权读取 |
+| `card-model.ts` | 纯函数：把 `presentationMeta` 转成卡片视图模型（可单测） |
+| `card-locales.ts` | 卡片中英文文案 |
 | `shims.d.ts` | `react` 与 `@deepseek-ai/dsh-client-ui-primitives` 的最小类型声明（构建时 external，运行时由 loader 提供） |
 
 ## 挂载方式

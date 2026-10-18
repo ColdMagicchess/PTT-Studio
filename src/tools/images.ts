@@ -1,6 +1,6 @@
 /** pptx_generate_assets and pptx_style_board tools. */
 import { existsSync } from 'node:fs'
-import { basename, join } from 'node:path'
+import { basename, dirname, join } from 'node:path'
 import type { Context } from '@deepseek-ai/cordis'
 import { defineTool } from '@deepseek-ai/dsh-tools'
 import { validateDeck } from '../deck/validate.ts'
@@ -115,7 +115,13 @@ export function registerImageTools(ctx: Context, config: Config): void {
       render: (_a, v) => v.job === undefined
         ? [{ type: 'text', text: `Images for ${v.deck} via ${v.backend}:\n${v.outcomes.map(outcomeLine).join('\n')}${v.kits.length === 0 ? '' : '\nDecoration kits:\n' + v.kits.map(kitLine).join('\n')}` }]
         : [{ type: 'text', text: `Started background job ${v.job.id} (${v.job.label}). Images are rendering in the background; the deck.json is written when it finishes. Keep working on the deck, then collect the result with job_output (wait:true, job_id) or list it with job_list.` }],
-      presentationMeta: (_a, v) => ({ deck: v.deck, files: v.outcomes.filter(o => o.file !== undefined).map(o => ({ id: o.id, file: o.file! })), kits: v.kits.map(k => ({ id: k.id, status: k.status, sheet: k.sheet ?? null })), job: v.job ?? null }),
+      presentationMeta: (_a, v) => ({
+        kind: 'pptx-assets', deck: v.deck, backend: v.backend,
+        files: v.outcomes.filter(o => o.file !== undefined).map(o => ({ id: o.id, status: o.status, file: join(dirname(v.deck), o.file!) })),
+        failed: v.outcomes.filter(o => o.status === 'failed' || o.status === 'rejected').map(o => ({ id: o.id, status: o.status, error: o.error ?? null })),
+        kits: v.kits.map(k => ({ id: k.id, status: k.status, sheet: k.sheet === undefined ? null : join(dirname(v.deck), k.sheet), pieces: k.files === undefined ? 0 : Object.keys(k.files).length })),
+        job: v.job ?? null,
+      }),
     },
     timeoutMs: 3_600_000,
     async execute(args, exec) {
@@ -202,7 +208,7 @@ export function registerImageTools(ctx: Context, config: Config): void {
     output: {
       schema: { type: 'object', additionalProperties: false, properties: { boards: { type: 'array', items: outcomeSchema, required: true } } },
       render: (_a, v) => [{ type: 'text', text: `Style boards:\n${v.boards.map(outcomeLine).join('\n')}` }],
-      presentationMeta: (_a, v) => ({ files: v.boards.filter(o => o.file !== undefined).map(o => o.file!) }),
+      presentationMeta: (a, v) => ({ kind: 'pptx-style-board', files: v.boards.filter(o => o.file !== undefined).map(o => o.file!), deck: a.deck }),
     },
     timeoutMs: 1_800_000,
     async execute(args, exec) {

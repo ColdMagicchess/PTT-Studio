@@ -17,9 +17,11 @@
 | `render.ts` | `pptx_render`；`locateRenderer` 自动查找独立 Node（`$DSH_HOME/dsh-runtimes/dsh-primary-runtime/.../node`）和 kit CLI（Electron 的 `process.resourcesPath/app.asar.unpacked/...`），也可以通过配置 `renderNode`、`renderCli` 指定；`renderPptx` 供 `pptx_review` 复用 |
 | `review.ts` | `pptx_review`：解析视觉模型目标、渲染、逐页调用 `vision.ts` 并输出结构化结果 |
 
-## 结果格式
+## 结果格式与 Web 卡片
 
-每个工具都返回结构化值：`render` 生成模型看到的文本，`presentationMeta` 留给第二阶段的 Web 卡片（路径、页数、问题数、生成的文件列表）。PTC 模式下，`tools.pptx_build(...)` 直接拿到这个结构化值。
+每个工具都返回结构化值：`render` 生成模型看到的文本，`presentationMeta` 记录进 Session 日志供 Web 卡片读取（带 `kind` 判别字段：`pptx-build`、`pptx-check`、`pptx-review`、`pptx-assets`、`pptx-style-board`、`pptx-render`）。浏览器侧 `src/client/cards.ts` 在 `tool.call.toolview` keyed slot 为 6 个工具注册专用卡片，只读这份记录，所以重开会话也显示同样的卡片；没有 meta 的旧结果走通用卡片。PTC 模式下，`tools.pptx_build(...)` 直接拿到结构化值。
+
+`pptx_build` 默认调用 `preview.ts`：48 dpi 渲染逐页缩略图（`review/<name>/slide-NN.png`）并拼成总览图 `<name>.preview.jpg`；渲染失败只写 `previewError`，不影响 .pptx。`preview: false` 跳过。
 
 ## 运行时间
 

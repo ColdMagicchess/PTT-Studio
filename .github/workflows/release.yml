@@ -1,0 +1,23 @@
+name: release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pack the committed bundle
+        run: |
+          VERSION=${GITHUB_REF_NAME#v}
+          node -e "if (require('./package.json').version !== process.argv[1]) { console.error('tag does not match package.json version'); process.exit(1) }" "$VERSION"
+          npm pack --ignore-scripts
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dsh-pptx-studio-*.tgz
+          generate_release_notes: true

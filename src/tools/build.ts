@@ -1,6 +1,6 @@
 /** pptx_build and pptx_check tools. */
 import { existsSync, readdirSync } from 'node:fs'
-import { basename, join, relative } from 'node:path'
+import { basename, dirname, join, relative } from 'node:path'
 import type { Context } from '@deepseek-ai/cordis'
 import { defineTool } from '@deepseek-ai/dsh-tools'
 import { validateDeck } from '../deck/validate.ts'
@@ -13,9 +13,16 @@ import { readFileSync } from 'node:fs'
 import { isAbsolute, resolve as resolvePath } from 'node:path'
 import { atomicWrite } from '../fsutil.ts'
 import type { Config } from '../config.ts'
+import { buildPreview, previewSheetPath } from './preview.ts'
 
-interface BuildArgs { deck: string; output?: string }
-interface BuildValue { path: string; version?: number; slides: number; bytes: number; errors: number; warnings: number; findings: Finding[] }
+interface BuildArgs { deck: string; output?: string; preview?: boolean }
+interface BuildValue {
+  path: string; version?: number; slides: number; bytes: number; errors: number; warnings: number; findings: Finding[]
+  /** Contact sheet and per-slide thumbnails for the Web card; absent when previews were skipped. */
+  preview?: { sheet: string; slides: { page: number; path: string }[] }
+  /** Why the preview could not be rendered; the .pptx itself is still valid. */
+  previewError?: string
+}
 interface CheckArgs { deck: string }
 interface CheckValue { errors: number; warnings: number; findings: Finding[] }
 import { callWorkspace, deckDirOf, readJsonFile } from './context.ts'
@@ -92,6 +99,7 @@ export function registerBuildTools(ctx: Context, config: Config, measurer: TextM
     parameters: {
       deck: { type: 'string', required: true, description: 'Path of deck.json; relative paths use the Session working directory.' },
       output: { type: 'string', description: 'Optional output .pptx path. Defaults to builds/deck.vN.pptx beside deck.json.' },
+      preview: { type: 'boolean', description: 'Render slide thumbnails and a contact sheet (<name>.preview.jpg) for the chat card; default true. Set false to skip rendering when iterating quickly.' },
     },
     output: {
       schema: {
@@ -104,10 +112,22 @@ export function registerBuildTools(ctx: Context, config: Config, measurer: TextM
           errors: { type: 'integer', required: true },
           warnings: { type: 'integer', required: true },
           findings: { type: 'array', items: findingSchema, required: true },
+          preview: {
+            type: 'object', additionalProperties: false,
+            properties: {
+              sheet: { type: 'string', required: true },
+              slides: { type: 'array', required: true, items: { type: 'object', additionalProperties: false, properties: { page: { type: 'integer', required: true }, path: { type: 'string', required: true } } } },
+            },
+          },
+          previewError: { type: 'string' },
         },
       },
-      render: (_args, v) => [{ type: 'text', text: `Built ${v.path} (${v.slides} slides, ${Math.round(v.bytes / 1024)} KiB). ${v.errors} error(s), ${v.warnings} warning(s).\n${summarize(v.findings)}` }],
-      presentationMeta: (_args, v) => ({ path: v.path, slides: v.slides, version: v.version ?? null, errors: v.errors, warnings: v.warnings }),
+      render: (_args, v) => [{ type: 'text', text: `Built ${v.path} (${v.slides} slides, ${Math.round(v.bytes / 1024)} KiB). ${v.errors} error(s), ${v.warnings} warning(s).${v.preview === undefined ? '' : `\nPreview sheet: ${v.preview.sheet}`}${v.previewError === undefined ? '' : `\nPreview skipped: ${v.previewError}`}\n${summarize(v.findings)}` }],
+      presentationMeta: (_args, v) => ({
+        kind: 'pptx-build', path: v.path, slides: v.slides, bytes: v.bytes, version: v.version ?? null, errors: v.errors, warnings: v.warnings,
+        sheet: v.preview?.sheet ?? null, thumbnails: v.preview?.slides.map(slide => slide.path) ?? [],
+        findings: v.findings.slice(0, 12).map(f => ({ slide: f.slide, check: f.check, severity: f.severity, message: f.message })),
+      }),
     },
     async execute(args, exec) {
       const ws = callWorkspace(ctx, exec)
@@ -132,10 +152,24 @@ export function registerBuildTools(ctx: Context, config: Config, measurer: TextM
       exec.signal.throwIfAborted()
       atomicWrite(out, result.bytes)
       const findings = checkDeck(deck, result.fits, result.missingAssets, result.unknownIcons, backgroundSampler(deck, dir))
+      let preview: BuildValue['preview']
+      let previewError: string | undefined
+      if (args.preview !== false) {
+        try {
+          ws.assertWritable(previewSheetPath(out))
+          ws.assertWritable(join(dirname(out), 'review', 'x.png'))
+          preview = await buildPreview(config, out, exec.signal)
+        } catch (error) {
+          exec.signal.throwIfAborted()
+          previewError = error instanceof Error ? error.message.slice(0, 300) : String(error)
+        }
+      }
       return {
         path: out, ...version === undefined ? {} : { version }, slides: result.slideCount, bytes: result.bytes.length,
         errors: findings.filter(f => f.severity === 'error').length, warnings: findings.filter(f => f.severity === 'warning').length,
         findings,
+        ...preview === undefined ? {} : { preview },
+        ...previewError === undefined ? {} : { previewError },
       }
     },
     presentCall: args => ({ card: 'generic', title: `Build ${basename(args.deck)}`, kind: 'edit' }),
@@ -153,7 +187,7 @@ export function registerBuildTools(ctx: Context, config: Config, measurer: TextM
         properties: { errors: { type: 'integer', required: true }, warnings: { type: 'integer', required: true }, findings: { type: 'array', items: findingSchema, required: true } },
       },
       render: (_args, v) => [{ type: 'text', text: `${v.errors} error(s), ${v.warnings} warning(s).\n${summarize(v.findings)}` }],
-      presentationMeta: (_args, v) => ({ errors: v.errors, warnings: v.warnings }),
+      presentationMeta: (_args, v) => ({ kind: 'pptx-check', errors: v.errors, warnings: v.warnings, findings: v.findings.slice(0, 12).map(f => ({ slide: f.slide, check: f.check, severity: f.severity, message: f.message })) }),
     },
     isConcurrencySafe: () => true,
     async execute(args, exec) {

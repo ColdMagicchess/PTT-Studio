@@ -90,7 +90,11 @@ export function registerReviewTool(ctx: Context, config: Config): void {
         type: 'text',
         text: 'Vision review via ' + v.model + ' (' + v.target + '): ' + v.summary.errors + ' error(s), ' + v.summary.warnings + ' warning(s), ' + v.summary.passed + ' passed page(s).\n' + v.pages.map(pageLine).join('\n') + (v.missingFonts.length > 0 ? '\nMissing fonts (substituted): ' + v.missingFonts.join(', ') : ''),
       }],
-      presentationMeta: (_a, v) => ({ model: v.model, pages: v.pages.map(page => ({ page: page.page, verdict: page.verdict, issues: page.issues.length })), files: v.rendered.map(image => image.path) }),
+      presentationMeta: (_a, v) => ({
+        kind: 'pptx-review', model: v.model, target: v.target, summary: { errors: v.summary.errors, warnings: v.summary.warnings, passed: v.summary.passed },
+        pages: v.pages.map(page => ({ page: page.page, verdict: page.verdict, score: page.score ?? null, issues: page.issues.slice(0, 6).map(issue => ({ severity: issue.severity, area: issue.area, issue: issue.issue.slice(0, 240), fix: issue.fix.slice(0, 240) })) })),
+        files: v.rendered.map(image => image.path),
+      }),
     },
     timeoutMs: 900_000,
     async execute(args, exec) {

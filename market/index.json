@@ -1,0 +1,101 @@
+{
+  "format": 1,
+  "title": {
+    "en": "PTT Studio plugins",
+    "zh": "PTT Studio 插件市场"
+  },
+  "description": {
+    "en": "Design-first PowerPoint generation for DeepSeek Harness.",
+    "zh": "DeepSeek Harness 的设计型 PPT 生成插件。"
+  },
+  "metadata": {
+    "categories": {
+      "office": {
+        "title": {
+          "en": "Office & documents",
+          "zh": "办公与文档"
+        }
+      }
+    },
+    "labels": {
+      "pptx": {
+        "title": {
+          "en": "PowerPoint",
+          "zh": "PPT"
+        }
+      },
+      "images": {
+        "title": {
+          "en": "AI images",
+          "zh": "AI 配图"
+        }
+      },
+      "vision": {
+        "title": {
+          "en": "Vision review",
+          "zh": "视觉评审"
+        }
+      }
+    }
+  },
+  "plugins": [
+    {
+      "name": "dsh-pptx-studio",
+      "title": {
+        "en": "PPT Studio",
+        "zh": "PPT 工作室"
+      },
+      "description": {
+        "en": "Design and build editable PowerPoint decks: guided intake, consistent AI imagery, deterministic layout, built-in checks, vision review and chat preview cards.",
+        "zh": "设计并生成可编辑的 PowerPoint：问需求、风格统一的配图、确定性排版、内置检查、视觉评审与聊天预览卡片。"
+      },
+      "icon": "icons/dsh-pptx-studio.svg",
+      "author": "ColdMagicchess",
+      "homepage": "https://github.com/ColdMagicchess/PTT-Studio#readme",
+      "repository": {
+        "url": "https://github.com/ColdMagicchess/PTT-Studio"
+      },
+      "metadata": {
+        "category": "office",
+        "keywords": [
+          "pptx",
+          "powerpoint",
+          "slides",
+          "presentation",
+          "PPT"
+        ],
+        "labels": [
+          "pptx",
+          "images",
+          "vision"
+        ]
+      },
+      "versions": [
+        {
+          "version": "0.3.1",
+          "publishTimestamp": 1792302520,
+          "source": {
+            "type": "git",
+            "url": "https://github.com/ColdMagicchess/PTT-Studio",
+            "commit": "70b333b8eac1169835d966dd8f0c37e9ddced7d3"
+          },
+          "engines": {
+            "dsh": ">=0.2.1-rc.2 <0.3.0"
+          }
+        },
+        {
+          "version": "0.2.2",
+          "publishTimestamp": 1792301615,
+          "source": {
+            "type": "git",
+            "url": "https://github.com/ColdMagicchess/PTT-Studio",
+            "commit": "e997ffdd6ae6ee556d5982a764ccb10bdf72d81d"
+          },
+          "engines": {
+            "dsh": ">=0.2.1-rc.2 <0.3.0"
+          }
+        }
+      ]
+    }
+  ]
+}

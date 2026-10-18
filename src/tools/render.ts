@@ -152,7 +152,7 @@ export function registerRenderTool(ctx: Context, config: Config): void {
         },
       },
       render: (_a, v) => [{ type: 'text', text: `Rendered ${v.images.length} slide(s) to ${v.outputDir}:\n${v.images.map(i => `- slide ${i.page}: ${i.path}`).join('\n')}${v.missingFonts.length > 0 ? `\nMissing fonts (substituted): ${v.missingFonts.join(', ')}` : ''}` }],
-      presentationMeta: (_a, v) => ({ files: v.images.map(i => i.path) }),
+      presentationMeta: (_a, v) => ({ kind: 'pptx-render', outputDir: v.outputDir, files: v.images.map(i => i.path), pages: v.images.map(i => i.page), missingFonts: v.missingFonts }),
     },
     timeoutMs: 600_000,
     async execute(args, exec) {

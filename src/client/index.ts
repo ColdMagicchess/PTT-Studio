@@ -1,5 +1,6 @@
 /**
- * Settings page for dsh-pptx-studio, mounted in the Plugins page under the
+ * Browser half of dsh-pptx-studio: chat cards for the pptx_* tools (keyed
+ * tool.call.toolview slot) and the settings page, mounted in the Plugins page under the
  * plugin's config slot. It edits the flat model-selection fields of the Host
  * config and writes API keys through the credentials domain; keys never enter
  * the config document or a settings response.
@@ -18,6 +19,9 @@ import {
   SettingsValueField,
   settingsTextField,
 } from '@deepseek-ai/dsh-client-ui-primitives'
+import { CARD_CSS, createCard } from './cards.ts'
+import { CARD_TOOLS, imageMime } from './card-model.ts'
+import { CARD_NS, cardEn, cardZh } from './card-locales.ts'
 
 /** Profile entry id of the Host plugin; the config namespace this page edits. */
 const ENTRY_ID = 'pptx-studio'
@@ -364,6 +368,7 @@ function SettingsPage(props: any): unknown {
  * @param ctx - browser plugin context.
  */
 export function apply(ctx: any): void {
+  mountCards(ctx)
   const primitives = { SettingsForm, SettingsFormModel, SettingsSecretField, SettingsValueField, settingsTextField }
   ctx.effect(() => ctx.locale.register(NS, { zh, en }), 'pptx-studio: dictionaries')
   const translate = ctx.locale.bind(NS)
@@ -388,4 +393,60 @@ export function apply(ctx: any): void {
       }, Page)
     }
   })), 'pptx-studio: settings page')
+}
+
+/** Cached blob URLs of Session images, revoked when the plugin unloads. */
+const MAX_CACHED_IMAGES = 240
+
+/**
+ * Register the pptx_* chat cards and their image loader.
+ * @param ctx - browser plugin context.
+ */
+function mountCards(ctx: any): void {
+  ctx.effect(() => ctx.locale.register(CARD_NS, { zh: cardZh, en: cardEn }), 'pptx-studio: card dictionaries')
+  const bound = ctx.locale.bind(CARD_NS)
+  const t = (key: string, params?: Record<string, unknown>): string => bound(key, params)
+  ctx.effect(() => {
+    if (typeof document === 'undefined') return () => {}
+    const style = document.createElement('style')
+    style.dataset.plugin = 'dsh-pptx-studio'
+    style.textContent = CARD_CSS
+    document.head.appendChild(style)
+    return () => { style.remove() }
+  }, 'pptx-studio: card styles')
+  const cache = new Map<string, Promise<string>>()
+  const urls = new Set<string>()
+  ctx.effect(() => () => {
+    for (const url of urls) URL.revokeObjectURL(url)
+    urls.clear()
+    cache.clear()
+  }, 'pptx-studio: card images')
+  const load = (sessionId: string, path: string, signal: AbortSignal): Promise<string> => {
+    const key = sessionId + '|' + path
+    const hit = cache.get(key)
+    if (hit !== undefined) return hit
+    const files = (ctx.get('remote') as any)?.workspaceFiles
+    if (files === undefined) return Promise.reject(new Error('workspace files are not available'))
+    const mime = imageMime(path) ?? 'application/octet-stream'
+    const pending = (async () => {
+      const result = await files.readBytes(sessionId, path, {}, signal)
+      if (!result?.ok) throw new Error(result?.error?.message ?? 'read failed')
+      const url = URL.createObjectURL(new Blob([result.value.data], { type: mime }))
+      urls.add(url)
+      return url
+    })()
+    pending.catch(() => { cache.delete(key) })
+    if (cache.size >= MAX_CACHED_IMAGES) {
+      const oldest = cache.keys().next().value
+      if (oldest !== undefined) cache.delete(oldest)
+    }
+    cache.set(key, pending)
+    return pending
+  }
+  const Card = createCard(load, t)
+  ctx.effect(() => ctx.slots.inject('tool.call.toolview', function* () {
+    for (const key of CARD_TOOLS) {
+      yield ctx.slots.register({ name: 'tool.call.toolview', key, locale: CARD_NS }, Card)
+    }
+  }), 'pptx-studio: tool cards')
 }

@@ -7,7 +7,7 @@
 给一个主题，得到一套可编辑、版式完整、配图统一的 PPT。
 
 [![DeepSeek Harness](https://img.shields.io/badge/DeepSeek%20Harness-%E2%89%A50.2.1--rc.2-0b5fff)](https://github.com/ColdMagicchess/PTT-Studio)
-[![tests](https://img.shields.io/badge/tests-131%20passed-brightgreen)](tests)
+[![tests](https://img.shields.io/badge/tests-137%20passed-brightgreen)](tests)
 [![license](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![node](https://img.shields.io/badge/node-%E2%89%A522.19-339933)](package.json)
 
@@ -65,11 +65,13 @@
 - `pptx_check` 检查溢出、重叠、安全区、密度、对比度、`fill` 覆盖率、装饰压字、背景纹理采样；
 - `pptx_review` 用配置的独立视觉模型逐页评审渲染图，返回结构化的版式 / 字号 / 对比度 / 配图问题；
 - `pptx_render` 用 LibreOffice Kit 渲染逐页 PNG，交给对话模型做视觉复查；
+- `pptx_build` 默认生成逐页缩略图和总览图 `<文件名>.preview.jpg`，交付时一起给出；
 - `pptx_generate_assets` 支持 `run_in_background`：图片多时立即返回 job id，模型继续写后面的页，最后用 `job_output` 收结果。
 
 ### 插件集成
 
 - 注册 `pptx-studio` skill：模型按「问需求 → 写 deck → 生成素材 → 组装 → 检查」流程执行；
+- **聊天卡片**：6 个 `pptx_*` 工具在 Web 对话里显示专用卡片——组装卡带总览图、页数、体积与问题，评审卡逐页结论，配图/样张/渲染卡显示缩略图网格，点击可放大；
 - 插件设置页：文字 / 图片 / 视觉三类模型，自定义 OpenAI 兼容模型，API Key 写入 DSH 凭据库；
 - 文字与视觉模型默认跟随当前对话；图片模型默认 Agnes；
 - 兼容 DSH Desktop 0.2.1-rc.2 及以上（`engines.dsh: >=0.2.1-rc.2 <0.3.0`）。
@@ -98,7 +100,15 @@
 - Node.js **≥ 22.19**（仅从源码构建时需要）；
 - 图片生成需要 Agnes 或 ModelScope 的 API Key。
 
-### 直接从 GitHub 安装（推荐）
+### 从插件市场安装（推荐）
+
+本仓库自带一份 DSH 插件市场索引（[market/index.json](market/index.json)，格式 1，已用 DSH 官方校验器验证）：
+
+1. 打开 **插件** → **实验性插件** 旁的 **更多** → 打开 **自定义插件市场**；
+2. 切到 **发现** → **添加索引源**，填入 `https://raw.githubusercontent.com/ColdMagicchess/PTT-Studio/main/market/index.json`；
+3. 搜索 “PPT”，点 **安装**。每个版本锁定到一个提交，无需构建授权。
+
+### 直接从 GitHub 安装
 
 本仓库按 DSH **组合包（bundle）分发格式**组织，并且已经把构建产物提交在 `lib/` 下，因此不需要在安装时构建：
 
@@ -124,11 +134,11 @@ pnpm run pack
 
 然后在 Desktop 中二选一：
 
-1. 打开「插件」页 → 安装第三方插件 → 选择 `dist/dsh-pptx-studio-0.3.1.tgz`；
+1. 打开「插件」页 → 安装第三方插件 → 选择 `dist/dsh-pptx-studio-0.4.0.tgz`；
 2. 或退出 Desktop 后，用自带 CLI 安装：
 
 ```powershell
-"E:\Deepseek harness Desktop\resources\runtime\cli\bin\dsh.cmd" plugin --profile desktop add "E:\path\to\dist\dsh-pptx-studio-0.3.1.tgz"
+"E:\Deepseek harness Desktop\resources\runtime\cli\bin\dsh.cmd" plugin --profile desktop add "E:\path\to\dist\dsh-pptx-studio-0.4.0.tgz"
 ```
 
 重启 Desktop，插件页出现 **PPT 工作室** 即安装成功。
@@ -220,9 +230,11 @@ src/
   check/              几何/对比度/覆盖率检查
   tools/              6 个模型工具与沙箱写入
   types/host.d.ts     DSH Host API 的最小类型声明
-tests/                vitest 单元测试（131 个）
+tests/                vitest 单元测试（137 个）
 scripts/              端到端与单 deck 开发脚本
 docs/                设置页设计与预览图
+market/              插件市场索引（格式 1）与图标
+.github/workflows/   CI 校验与 Release 打包
 ```
 
 ## 开发
@@ -247,8 +259,8 @@ pnpm run build                     # lib/index.js + lib/client.js
 - [x] Phase 4.5：满版、去白框、装饰件物理比例、媒体去重
 - [x] Phase 5：生图后台任务、模型设置页与 Key 输入
 - [x] Phase 6：独立视觉模型逐页评审（`pptx_review`）
-- [ ] Phase 7：Web 体验（工具卡片、PPT 预览、交付缩略图）
-- [ ] Phase 8：插件市场发布
+- [x] Phase 7：Web 体验（工具卡片、PPT 总览图预览、交付缩略图）
+- [x] Phase 8：插件市场发布（[market/index.json](market/index.json) + GitHub Release 工作流）
 
 ## 说明
 
